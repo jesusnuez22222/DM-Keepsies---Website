@@ -392,37 +392,74 @@
       overflow: hidden;
       box-shadow: var(--shadow-card);
       background: linear-gradient(135deg, var(--blush) 0%, #f5c0d3 50%, #f9d8e6 100%);
-      height: 480px;
+      height: 520px;
+      position: relative;
+    }
+    .about-img-main img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+    .about-img-overlay {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, rgba(44,32,34,.72) 0%, transparent 60%);
+      padding: 28px 24px 24px;
+    }
+    .about-img-name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.2;
+    }
+    .about-img-role {
+      font-size: .85rem;
+      color: rgba(255,255,255,.8);
+      margin-top: 4px;
       display: flex;
       align-items: center;
-      justify-content: center;
-    }
-    .about-logo-display {
-      width: 75%;
-      filter: drop-shadow(0 8px 24px rgba(196,82,107,.2));
+      gap: 6px;
     }
     .about-accent {
       position: absolute;
-      bottom: -24px;
-      right: -24px;
-      width: 160px;
+      top: 20px;
+      right: -20px;
       background: var(--white);
       border-radius: var(--radius-md);
-      padding: 20px;
+      padding: 14px 18px;
       box-shadow: var(--shadow-card);
       text-align: center;
+      min-width: 120px;
     }
     .about-accent .accent-num {
-      font-size: 2rem;
+      font-size: 1.5rem;
       font-weight: 700;
       color: var(--rose);
       line-height: 1;
     }
     .about-accent .accent-label {
-      font-size: .78rem;
+      font-size: .72rem;
       color: var(--gray-text);
       font-weight: 500;
       margin-top: 4px;
+    }
+    .about-location-badge {
+      position: absolute;
+      bottom: 88px;
+      right: -20px;
+      background: var(--rose);
+      color: var(--white);
+      border-radius: var(--radius-pill);
+      padding: 8px 16px;
+      font-size: .8rem;
+      font-weight: 600;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
     }
 
     .about-content { }
@@ -881,8 +918,9 @@
       .hero-trust      { gap: 20px; }
 
       .about-grid      { grid-template-columns: 1fr; gap: 48px; }
-      .about-img-main  { height: 320px; }
-      .about-accent    { bottom: -16px; right: -8px; }
+      .about-img-main  { height: 380px; }
+      .about-accent    { top: 12px; right: -8px; }
+      .about-location-badge { right: -8px; }
 
       .steps           { grid-template-columns: 1fr; gap: 48px; }
       .steps::before   { display: none; }
@@ -1048,28 +1086,32 @@
         <div class="about-visual reveal">
           <div class="about-img-main">
             <img
-              class="about-logo-display"
-              src="brand_assets/616814509_4232158440434450_2719695261011975037_n.jpg"
-              alt="DM Keepsies Logo"
+              src="brand_assets/707136616_4360965640887062_415140416373327883_n.jpg"
+              alt="May Ann Acorda — Owner of DM Keepsies"
             />
+            <div class="about-img-overlay">
+              <div class="about-img-name">May Ann Acorda</div>
+              <div class="about-img-role">🎀 Founder &amp; Owner, DM Keepsies</div>
+            </div>
           </div>
           <div class="about-accent">
-            <div class="accent-num">❤️</div>
-            <div class="accent-label">Made with Love</div>
+            <div class="accent-num">500+</div>
+            <div class="accent-label">Happy Clients</div>
           </div>
+          <div class="about-location-badge">📍 Davao, Philippines</div>
         </div>
 
         <div class="about-content reveal reveal-delay-2">
-          <span class="section-label">Our story</span>
-          <h2 class="section-title">Personalized Keepsakes, <span>Made with Love</span></h2>
+          <span class="section-label">Meet the owner</span>
+          <h2 class="section-title">Hi, I'm <span>May Ann</span> 👋</h2>
           <p style="margin-top:20px;">
-            At DM Keepsies, we believe every celebration deserves more than just a memory — it deserves something beautiful and tangible to hold onto.
+            I'm May Ann Acorda, a 24-year-old entrepreneur from Davao, Philippines, and the proud founder of DM Keepsies. What started as a passion for creating meaningful, handcrafted gifts has grown into a business I pour my whole heart into every single day.
           </p>
           <p>
-            Each piece is thoughtfully crafted and personalized just for you. From the details you choose to the care we put into every order, our goal is to make your guests feel seen, valued, and moved.
+            I believe that every celebration, no matter how big or small, deserves a beautiful, personal touch. Each keepsake I create is more than just a souvenir; it's a lasting reminder of the moments and people that matter most.
           </p>
           <p>
-            Whether it's a grand wedding or an intimate family gathering, we pour our hearts into every keepsake we create.
+            From weddings to baptisms, birthdays to anniversaries, I'm here to make sure your guests leave with something truly special.
           </p>
 
           <div class="about-pills">
@@ -1080,7 +1122,7 @@
             <span class="pill">📦 Memorable</span>
           </div>
 
-          <a href="#order" class="btn btn-primary">Start Your Order</a>
+          <a href="#order" class="btn btn-primary">Work with May Ann</a>
         </div>
 
       </div>
