@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us – DM Keepsies</title>
+  <meta name="description" content="Get in touch with DM Keepsies. Have questions about our personalized keepsakes? We'd love to hear from you." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --rose:       #C4526B;
+      --rose-deep:  #A33D57;
+      --rose-mid:   #D4708A;
+      --pink-soft:  #F2A8BB;
+      --blush:      #FDE8F0;
+      --blush-lite: #FDF5F7;
+      --white:      #FFFFFF;
+      --gray-light: #F8F4F5;
+      --gray-mid:   #B0A0A5;
+      --gray-text:  #6B5A60;
+      --dark:       #2C2022;
+      --radius-sm:  8px;
+      --radius-md:  16px;
+      --radius-lg:  32px;
+      --radius-pill:999px;
+      --shadow-soft: 0 4px 24px rgba(196,82,107,.10);
+      --shadow-card: 0 8px 40px rgba(196,82,107,.13);
+      --transition: .3s ease;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      color: var(--dark);
+      background: var(--white);
+      overflow-x: hidden;
+      line-height: 1.65;
+    }
+    img { display: block; max-width: 100%; }
+    a   { text-decoration: none; color: inherit; }
+    ul  { list-style: none; }
+
+    /* ── UTILITY ── */
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+    .section-label {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.3rem;
+      color: var(--rose-mid);
+      display: block;
+      margin-bottom: 8px;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      color: var(--dark);
+      line-height: 1.2;
+    }
+    .section-title span { color: var(--rose); }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      border-radius: var(--radius-pill);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      font-size: .95rem;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+    }
+    .btn-primary {
+      background: var(--rose);
+      color: var(--white);
+      box-shadow: 0 4px 20px rgba(196,82,107,.35);
+    }
+    .btn-primary:hover {
+      background: var(--rose-deep);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(196,82,107,.45);
+    }
+    .btn-sm { padding: 8px 18px; font-size: .82rem; }
+
+    /* ── NAV ── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(196,82,107,.08);
+      transition: box-shadow var(--transition);
+    }
+    .nav.scrolled { box-shadow: var(--shadow-soft); }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 88px;
+    }
+    .nav-logo { height: 80px; width: auto; }
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      align-items: center;
+    }
+    .nav-links a {
+      font-size: .9rem;
+      font-weight: 500;
+      color: var(--gray-text);
+      transition: color var(--transition);
+    }
+    .nav-links a:hover { color: var(--rose); }
+    .nav-links a.active { color: var(--rose); font-weight: 700; }
+    .nav-cta { display: flex; align-items: center; gap: 12px; }
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+    }
+    .hamburger span {
+      width: 24px; height: 2px;
+      background: var(--rose);
+      border-radius: 2px;
+      transition: var(--transition);
+    }
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      background: var(--white);
+      border-top: 1px solid var(--blush);
+      padding: 12px 0 20px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      padding: 12px 24px;
+      font-size: .95rem;
+      font-weight: 500;
+      color: var(--gray-text);
+      transition: color var(--transition), background var(--transition);
+    }
+    .mobile-menu a:hover, .mobile-menu a.active {
+      color: var(--rose);
+      background: var(--blush-lite);
+    }
+    .mobile-menu .btn { margin: 8px 24px 0; justify-content: center; }
+
+    /* ── PAGE HERO ── */
+    .page-hero {
+      padding-top: 88px;
+      background:
+        radial-gradient(ellipse 70% 60% at 90% 40%, rgba(242,168,187,.18) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 70% at 5% 80%, rgba(253,232,240,.5) 0%, transparent 60%),
+        var(--white);
+      padding-bottom: 64px;
+    }
+    .page-hero-inner {
+      padding-top: 60px;
+      text-align: center;
+    }
+    .page-hero-eyebrow {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.3rem;
+      color: var(--rose-mid);
+      margin-bottom: 12px;
+      display: block;
+    }
+    .page-hero-title {
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      font-weight: 700;
+      color: var(--dark);
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .page-hero-title span { color: var(--rose); }
+    .page-hero-sub {
+      font-size: 1.05rem;
+      color: var(--gray-text);
+      max-width: 540px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* ── CONTACT SECTION ── */
+    .contact-section {
+      padding: 0 0 100px;
+    }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 56px;
+      align-items: start;
+    }
+
+    /* Info side */
+    .contact-info { }
+    .contact-info-card {
+      background: var(--blush-lite);
+      border-radius: var(--radius-lg);
+      padding: 40px 36px;
+      border: 1.5px solid rgba(196,82,107,.08);
+    }
+    .contact-info-card h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--dark);
+    }
+    .contact-info-card > p {
+      font-size: .92rem;
+      color: var(--gray-text);
+      margin-bottom: 32px;
+      line-height: 1.7;
+    }
+    .info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .info-item:last-child { margin-bottom: 0; }
+    .info-icon {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--blush);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      border: 1.5px solid rgba(196,82,107,.12);
+    }
+    .info-text { }
+    .info-text strong {
+      display: block;
+      font-size: .88rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 3px;
+    }
+    .info-text a, .info-text span {
+      font-size: .85rem;
+      color: var(--rose);
+      font-weight: 500;
+      transition: color var(--transition);
+    }
+    .info-text a:hover { color: var(--rose-deep); }
+
+    .contact-divider {
+      border: none;
+      border-top: 1px solid rgba(196,82,107,.12);
+      margin: 28px 0;
+    }
+    .response-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      box-shadow: var(--shadow-soft);
+    }
+    .response-badge .badge-icon { font-size: 1.4rem; }
+    .response-badge p {
+      font-size: .83rem;
+      color: var(--gray-text);
+      line-height: 1.5;
+    }
+    .response-badge strong { color: var(--dark); }
+
+    /* Form side */
+    .contact-form-wrap {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 44px 40px;
+      box-shadow: var(--shadow-card);
+      border: 1.5px solid rgba(196,82,107,.07);
+    }
+    .form-header { margin-bottom: 32px; }
+    .form-header h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 8px;
+    }
+    .form-header p {
+      font-size: .9rem;
+      color: var(--gray-text);
+      line-height: 1.6;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      font-size: .82rem;
+      font-weight: 600;
+      color: var(--dark);
+      letter-spacing: .02em;
+    }
+    .form-group label span { color: var(--rose); margin-left: 2px; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 13px 16px;
+      border: 1.5px solid rgba(196,82,107,.18);
+      border-radius: var(--radius-sm);
+      font-family: 'Montserrat', sans-serif;
+      font-size: .9rem;
+      color: var(--dark);
+      background: var(--white);
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none;
+    }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: var(--gray-mid); }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--rose);
+      box-shadow: 0 0 0 3px rgba(196,82,107,.1);
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 140px;
+      line-height: 1.6;
+    }
+    .form-group select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23C4526B' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+
+    .form-submit {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 8px;
+    }
+    .form-note {
+      font-size: .78rem;
+      color: var(--gray-text);
+    }
+    .btn-submit {
+      padding: 15px 40px;
+      font-size: 1rem;
+    }
+
+    /* Success message */
+    .form-success {
+      display: none;
+      background: linear-gradient(135deg, var(--blush) 0%, #f9d4e2 100%);
+      border-radius: var(--radius-md);
+      padding: 28px 24px;
+      text-align: center;
+      margin-top: 20px;
+      border: 1.5px solid rgba(196,82,107,.15);
+    }
+    .form-success .success-icon { font-size: 2.5rem; margin-bottom: 10px; }
+    .form-success h4 { font-size: 1.1rem; font-weight: 700; color: var(--rose-deep); margin-bottom: 6px; }
+    .form-success p { font-size: .88rem; color: var(--gray-text); }
+
+    /* ── FOOTER ── */
+    .footer {
+      background: var(--dark);
+      color: rgba(255,255,255,.7);
+      padding: 56px 0 32px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+    .footer-logo {
+      height: 64px; width: auto;
+      border-radius: var(--radius-sm);
+      margin-bottom: 16px;
+      background: var(--white);
+      padding: 6px 12px;
+    }
+    .footer-brand p { font-size: .9rem; line-height: 1.7; max-width: 320px; }
+    .footer-social { display: flex; gap: 12px; margin-top: 20px; }
+    .social-btn {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.08);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      transition: background var(--transition);
+      cursor: pointer;
+    }
+    .social-btn:hover { background: var(--rose); }
+    .footer-col h4 {
+      font-size: .9rem; font-weight: 700; color: var(--white);
+      margin-bottom: 20px; text-transform: uppercase; letter-spacing: .08em;
+    }
+    .footer-col ul { display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a {
+      font-size: .88rem; color: rgba(255,255,255,.6);
+      transition: color var(--transition);
+    }
+    .footer-col ul li a:hover { color: var(--pink-soft); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.08);
+      padding-top: 28px;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .footer-bottom p { font-size: .82rem; }
+    .footer-bottom .heart { color: var(--pink-soft); }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: .1s; }
+    .reveal-delay-2 { transition-delay: .2s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+      .contact-grid { grid-template-columns: 1fr; gap: 36px; }
+      .form-row { grid-template-columns: 1fr; }
+      .contact-form-wrap { padding: 32px 24px; }
+      .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="navbar">
+    <div class="container nav-inner">
+      <a href="index.html">
+        <img class="nav-logo" src="brand_assets/616814509_4232158440434450_2719695261011975037_n.jpg" alt="DM Keepsies" />
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html#events">Events</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="index.html#products">Products</a></li>
+        <li><a href="index.html#how">How It Works</a></li>
+        <li><a href="contact.html" class="active">Contact Us</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="index.html#order" class="btn btn-primary btn-sm">Order Now</a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="index.html#events" onclick="closeMobile()">Events</a>
+      <a href="about.html" onclick="closeMobile()">About</a>
+      <a href="index.html#products" onclick="closeMobile()">Products</a>
+      <a href="index.html#how" onclick="closeMobile()">How It Works</a>
+      <a href="contact.html" class="active" onclick="closeMobile()">Contact Us</a>
+      <a href="index.html#order" class="btn btn-primary" onclick="closeMobile()">Order Now</a>
+    </div>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="page-hero-inner reveal">
+        <span class="page-hero-eyebrow">✉️ We'd love to hear from you</span>
+        <h1 class="page-hero-title">Get in <span>Touch</span> with Us</h1>
+        <p class="page-hero-sub">
+          Have questions about our products? Get in touch with us, and we'll respond as soon as possible.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT SECTION -->
+  <section class="contact-section">
+    <div class="container">
+      <div class="contact-grid">
+
+        <!-- Info side -->
+        <div class="contact-info reveal">
+          <div class="contact-info-card">
+            <h3>Contact Information</h3>
+            <p>Reach out through any of these channels and we'll get back to you right away.</p>
+
+            <div class="info-item">
+              <div class="info-icon">📱</div>
+              <div class="info-text">
+                <strong>Facebook</strong>
+                <a href="https://www.facebook.com/profile.php?id=61586949472102" target="_blank" rel="noopener">DM Keepsies</a>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-icon">✉️</div>
+              <div class="info-text">
+                <strong>Email</strong>
+                <a href="mailto:Mayangacorda@gmail.com">Mayangacorda@gmail.com</a>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-icon">📍</div>
+              <div class="info-text">
+                <strong>Location</strong>
+                <span>Davao, Philippines</span>
+              </div>
+            </div>
+
+            <hr class="contact-divider" />
+
+            <div class="response-badge">
+              <div class="badge-icon">⚡</div>
+              <p><strong>Quick response time.</strong> We typically reply within 24 hours on business days.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form side -->
+        <div class="contact-form-wrap reveal reveal-delay-1">
+          <div class="form-header">
+            <span class="section-label">Send us a message</span>
+            <h2>We're Here to Help 🎀</h2>
+            <p>Fill out the form below and we'll get back to you as soon as possible.</p>
+          </div>
+
+          <form id="contactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name">Name <span>*</span></label>
+                <input type="text" id="name" name="name" placeholder="Your full name" required />
+              </div>
+              <div class="form-group">
+                <label for="email">Email <span>*</span></label>
+                <input type="email" id="email" name="email" placeholder="your@email.com" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="subject">Subject <span>*</span></label>
+              <select id="subject" name="subject" required>
+                <option value="" disabled selected>Select an occasion</option>
+                <option value="Wedding Keepsakes">Wedding Keepsakes</option>
+                <option value="Baptism Keepsakes">Baptism Keepsakes</option>
+                <option value="Birthday Keepsakes">Birthday Keepsakes</option>
+                <option value="Anniversary Keepsakes">Anniversary Keepsakes</option>
+                <option value="Other Celebration">Other Celebration</option>
+                <option value="General Inquiry">General Inquiry</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="message">Message <span>*</span></label>
+              <textarea id="message" name="message" placeholder="Tell us about your event — occasion, date, quantity, and any special requests..." required></textarea>
+            </div>
+
+            <div class="form-submit">
+              <p class="form-note">* Required fields</p>
+              <button type="submit" class="btn btn-primary btn-submit">
+                Send Message ✉️
+              </button>
+            </div>
+          </form>
+
+          <div class="form-success" id="formSuccess">
+            <div class="success-icon">🎀</div>
+            <h4>Message Sent!</h4>
+            <p>Thank you for reaching out! We'll get back to you within 24 hours.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img class="footer-logo" src="brand_assets/616814509_4232158440434450_2719695261011975037_n.jpg" alt="DM Keepsies" />
+          <p>Personalized keepsakes made with love for every celebration that deserves to be remembered. Crafting beautiful memories, one keepsake at a time.</p>
+          <div class="footer-social">
+            <a class="social-btn" href="https://www.facebook.com/profile.php?id=61586949472102" target="_blank" rel="noopener" title="Facebook">f</a>
+            <div class="social-btn" title="Instagram">📸</div>
+            <div class="social-btn" title="TikTok">♪</div>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Occasions</h4>
+          <ul>
+            <li><a href="index.html#events">Weddings</a></li>
+            <li><a href="index.html#events">Baptisms</a></li>
+            <li><a href="index.html#events">Birthdays</a></li>
+            <li><a href="index.html#events">Anniversaries</a></li>
+            <li><a href="index.html#events">All Celebrations</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="index.html#products">Our Products</a></li>
+            <li><a href="index.html#how">How It Works</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="index.html#order">Order Now</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 DM Keepsies. All rights reserved.</p>
+        <p>Made with <span class="heart">♥</span> for every special moment</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 20);
+    });
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    hamburger.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+    function closeMobile() { mobileMenu.classList.remove('open'); }
+
+    const revealEls = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      }),
+      { threshold: 0.12 }
+    );
+    revealEls.forEach(el => observer.observe(el));
+
+    // Show success message on submit (works with Formspree)
+    const form = document.getElementById('contactForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const res = await fetch(form.action, {
+        method: 'POST', body: data,
+        headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+        form.style.display = 'none';
+        document.getElementById('formSuccess').style.display = 'block';
+      } else {
+        alert('Something went wrong. Please try emailing us directly at Mayangacorda@gmail.com');
+      }
+    });
+  </script>
+</body>
+</html>
