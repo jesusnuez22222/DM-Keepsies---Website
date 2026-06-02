@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet" />
   <script src="https://js.stripe.com/v3/"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -268,6 +269,11 @@
   <script src="js/cart.js"></script>
   <script>
     const PUBLISHABLE_KEY = 'pk_test_51TdvMqRzaznEyq6DlBN57sDGcKa2WEpazlGDl7vIoPcOOVMlTtGGQpY4XX97tvdps9WE4TgbSUUvUbsjp2Bpwx7200zCvfnuuO';
+    const { createClient } = supabase;
+    const _supabase = createClient(
+      'https://boxudirhejtzklnpnxfw.supabase.co',
+      'sb_publishable_j9kJoHJXwKXQcXY-ginFKQ_p5eilcPr'
+    );
     const stripe = Stripe(PUBLISHABLE_KEY);
     const elements = stripe.elements();
 
@@ -406,7 +412,30 @@
           spinner.style.display = 'none';
         } else {
           const notes = document.getElementById('notes').value;
-          const orderData = { name: `${firstName} ${lastName}`, email, notes, items, total };
+
+          // Save order to Supabase
+          const { data: savedOrder, error: dbError } = await _supabase
+            .from('orders')
+            .insert({
+              customer_name: `${firstName} ${lastName}`,
+              customer_email: email,
+              items: items,
+              total_amount: total,
+              order_notes: notes || '',
+              stripe_payment_id: result.paymentIntent.id,
+              status: 'paid'
+            })
+            .select()
+            .single();
+
+          if (dbError) console.error('DB save error:', dbError.message);
+
+          const orderData = {
+            id: savedOrder?.id || null,
+            name: `${firstName} ${lastName}`,
+            email, notes, items, total,
+            stripe_payment_id: result.paymentIntent.id
+          };
           localStorage.setItem('dmk_last_order', JSON.stringify(orderData));
           Cart.clear();
           window.location.href = 'success.html';
