@@ -513,13 +513,16 @@
     }
     .product-img {
       height: 220px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 3.5rem;
       position: relative;
       overflow: hidden;
     }
+    .product-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transition: transform .5s ease;
+    }
+    .product-card:hover .product-img img { transform: scale(1.05); }
     .pi-1 { background: linear-gradient(135deg, #fde8f0 0%, #f9c5d8 100%); }
     .pi-2 { background: linear-gradient(135deg, #f5e8fd 0%, #e8c5f9 100%); }
     .pi-3 { background: linear-gradient(135deg, #e8f3fd 0%, #c5d8f9 100%); }
@@ -1092,91 +1095,91 @@
       <div class="products-grid">
 
         <div class="product-card reveal reveal-delay-1">
-          <div class="product-img pi-1">
-            <span>🧴</span>
-            <span class="product-tag">Wedding</span>
+          <div class="product-img">
+            <img src="brand_assets/candles-pink.jpg" alt="Personalized Candle Favors" />
+            <span class="product-tag">All Events</span>
           </div>
           <div class="product-body">
             <h3>Personalized Candle Favors</h3>
-            <p>Scented soy candles in custom labels with your names and wedding date.</p>
+            <p>Taper candles wrapped with jute twine and tied with a satin ribbon bow. Personalized tag included.</p>
             <div class="product-footer">
-              <div class="product-price">Contact Us Us <span>for pricing</span></div>
-              <a href="#order" class="btn btn-primary btn-sm">Inquire</a>
+              <div class="product-price">₱12<span>/pc · ₱120 for 12pcs</span></div>
+              <a href="products.html" class="btn btn-primary btn-sm">View</a>
             </div>
           </div>
         </div>
 
         <div class="product-card reveal reveal-delay-2">
-          <div class="product-img pi-2">
-            <span>🎁</span>
-            <span class="product-tag">Baptism</span>
+          <div class="product-img">
+            <img src="brand_assets/christening-magnet-dino-pink.jpg" alt="Personalized Ref Magnet" />
+            <span class="product-tag">All Events</span>
           </div>
           <div class="product-body">
-            <h3>Custom Rosary Pouches</h3>
-            <p>Silk pouches with embroidered name and baptism date — a sacred keepsake.</p>
+            <h3>Personalized Ref Magnet</h3>
+            <p>ATM-sized or facecut refrigerator magnets with custom photo, theme, and event details.</p>
             <div class="product-footer">
-              <div class="product-price">Contact Us Us <span>for pricing</span></div>
-              <a href="#order" class="btn btn-primary btn-sm">Inquire</a>
+              <div class="product-price">₱20<span>/pc</span></div>
+              <a href="products.html" class="btn btn-primary btn-sm">View</a>
             </div>
           </div>
         </div>
 
         <div class="product-card reveal reveal-delay-3">
-          <div class="product-img pi-3">
-            <span>🖼️</span>
+          <div class="product-img">
+            <img src="brand_assets/keychain-50th-pink.jpg" alt="Personalized Keychain" />
             <span class="product-tag">All Events</span>
           </div>
           <div class="product-body">
-            <h3>Mini Photo Frames</h3>
-            <p>Personalized mini frames for any celebration — timeless and elegant.</p>
+            <h3>Personalized Keychain</h3>
+            <p>Clear acrylic keychains with your custom photo, name, and event design. Durable and always on hand.</p>
             <div class="product-footer">
-              <div class="product-price">Contact Us Us <span>for pricing</span></div>
-              <a href="#order" class="btn btn-primary btn-sm">Inquire</a>
+              <div class="product-price">₱20<span>/pc</span></div>
+              <a href="products.html" class="btn btn-primary btn-sm">View</a>
             </div>
           </div>
         </div>
 
         <div class="product-card reveal reveal-delay-1">
-          <div class="product-img pi-4">
-            <span>🍪</span>
-            <span class="product-tag">Birthday</span>
+          <div class="product-img">
+            <img src="brand_assets/wedding-favor-candle-pink.jpg" alt="Personalized Shot Glass" />
+            <span class="product-tag">Wedding</span>
           </div>
           <div class="product-body">
-            <h3>Custom Cookie Boxes</h3>
-            <p>Beautifully boxed decorated cookies with personalized messages and designs.</p>
+            <h3>Personalized Shot Glass</h3>
+            <p>Elegant glass favors with custom label, wrapped in cellophane and tied with a satin bow.</p>
             <div class="product-footer">
-              <div class="product-price">Contact Us Us <span>for pricing</span></div>
-              <a href="#order" class="btn btn-primary btn-sm">Inquire</a>
+              <div class="product-price">₱35<span>/pc</span></div>
+              <a href="products.html" class="btn btn-primary btn-sm">View</a>
             </div>
           </div>
         </div>
 
         <div class="product-card reveal reveal-delay-2">
-          <div class="product-img pi-5">
-            <span>🌿</span>
-            <span class="product-tag">All Events</span>
+          <div class="product-img">
+            <img src="brand_assets/debut-fan-pink.jpg" alt="Personalized Debut Fan" />
+            <span class="product-tag">Debut</span>
           </div>
           <div class="product-body">
-            <h3>Succulent Party Favors</h3>
-            <p>Live mini succulents in branded pots — a living reminder of your special day.</p>
+            <h3>Personalized Debut Fan</h3>
+            <p>Elegant printed fans with custom photo, message, and design. A beautiful keepsake for debut celebrations.</p>
             <div class="product-footer">
-              <div class="product-price">Contact Us Us <span>for pricing</span></div>
-              <a href="#order" class="btn btn-primary btn-sm">Inquire</a>
+              <div class="product-price">Contact Us <span>for pricing</span></div>
+              <a href="contact.html" class="btn btn-primary btn-sm">Inquire</a>
             </div>
           </div>
         </div>
 
         <div class="product-card reveal reveal-delay-3">
-          <div class="product-img pi-6">
-            <span>📿</span>
-            <span class="product-tag">Wedding</span>
+          <div class="product-img">
+            <img src="brand_assets/birthday-hat-pink.jpg" alt="Personalized Birthday Hat" />
+            <span class="product-tag">Birthday</span>
           </div>
           <div class="product-body">
-            <h3>Personalized Jewelry Tags</h3>
-            <p>Delicate charm tags engraved with initials, dates, or short meaningful phrases.</p>
+            <h3>Personalized Birthday Hat</h3>
+            <p>Custom printed party hats featuring your child's photo, name, and chosen theme. Perfect for any birthday.</p>
             <div class="product-footer">
-              <div class="product-price">Contact Us Us <span>for pricing</span></div>
-              <a href="#order" class="btn btn-primary btn-sm">Inquire</a>
+              <div class="product-price">Contact Us <span>for pricing</span></div>
+              <a href="contact.html" class="btn btn-primary btn-sm">Inquire</a>
             </div>
           </div>
         </div>
