@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout – DM Keepsies</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --rose: #C4526B; --rose-deep: #A33D57; --rose-mid: #D4708A;
+      --pink-soft: #F2A8BB; --blush: #FDE8F0; --blush-lite: #FDF5F7;
+      --white: #FFFFFF; --gray-mid: #B0A0A5; --gray-text: #6B5A60;
+      --dark: #2C2022; --radius-sm: 8px; --radius-md: 16px;
+      --radius-lg: 32px; --radius-pill: 999px;
+      --shadow-soft: 0 4px 24px rgba(196,82,107,.10);
+      --shadow-card: 0 8px 40px rgba(196,82,107,.13);
+      --transition: .3s ease;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Montserrat', sans-serif; color: var(--dark); background: var(--blush-lite); line-height: 1.65; }
+    img { display: block; max-width: 100%; }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+
+    /* NAV */
+    .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(255,255,255,.92); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(196,82,107,.08); transition: box-shadow var(--transition); }
+    .nav.scrolled { box-shadow: var(--shadow-soft); }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 88px; }
+    .nav-logo { height: 80px; width: auto; }
+    .nav-links { display: flex; gap: 36px; align-items: center; }
+    .nav-links a { font-size: .9rem; font-weight: 500; color: var(--gray-text); transition: color var(--transition); }
+    .nav-links a:hover, .nav-links a.active { color: var(--rose); }
+    .nav-links a.active { font-weight: 700; }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-cart { position: relative; display: flex; align-items: center; gap: 6px; font-size: .9rem; font-weight: 600; color: var(--rose); cursor: pointer; padding: 8px 12px; border-radius: var(--radius-pill); transition: background var(--transition); }
+    .nav-cart:hover { background: var(--blush); }
+    .cart-badge { background: var(--rose); color: var(--white); border-radius: 50%; width: 20px; height: 20px; font-size: .7rem; font-weight: 700; display: none; align-items: center; justify-content: center; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px; border-radius: var(--radius-pill); font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: .95rem; cursor: pointer; transition: var(--transition); border: none; }
+    .btn-primary { background: var(--rose); color: var(--white); box-shadow: 0 4px 20px rgba(196,82,107,.35); }
+    .btn-primary:hover { background: var(--rose-deep); transform: translateY(-2px); }
+    .btn-primary:disabled { background: var(--gray-mid); box-shadow: none; cursor: not-allowed; transform: none; }
+    .btn-sm { padding: 10px 22px; font-size: .85rem; }
+    .btn-outline { background: transparent; color: var(--rose); border: 2px solid var(--rose); }
+    .btn-outline:hover { background: var(--rose); color: var(--white); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+    .hamburger span { width: 24px; height: 2px; background: var(--rose); border-radius: 2px; }
+    .mobile-menu { display: none; flex-direction: column; background: var(--white); border-top: 1px solid var(--blush); padding: 12px 0 20px; }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { padding: 12px 24px; font-size: .95rem; font-weight: 500; color: var(--gray-text); }
+    .mobile-menu a:hover, .mobile-menu a.active { color: var(--rose); background: var(--blush-lite); }
+    .mobile-menu .btn { margin: 8px 24px 0; justify-content: center; }
+
+    /* PAGE */
+    .page-wrap { padding-top: 88px; min-height: 100vh; }
+    .page-header { background: var(--white); border-bottom: 1px solid rgba(196,82,107,.08); padding: 40px 0 32px; }
+    .page-header h1 { font-size: 1.8rem; font-weight: 700; }
+    .breadcrumb { font-size: .82rem; color: var(--gray-text); margin-top: 6px; }
+    .breadcrumb a { color: var(--rose); }
+
+    /* CHECKOUT GRID */
+    .checkout-section { padding: 40px 0 80px; }
+    .checkout-grid { display: grid; grid-template-columns: 1fr 420px; gap: 32px; align-items: start; }
+
+    /* CART ITEMS */
+    .checkout-card { background: var(--white); border-radius: var(--radius-md); padding: 32px; box-shadow: var(--shadow-soft); border: 1.5px solid rgba(196,82,107,.07); }
+    .checkout-card h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(196,82,107,.1); }
+
+    .cart-item { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid rgba(196,82,107,.07); align-items: center; }
+    .cart-item:last-child { border-bottom: none; }
+    .cart-item-img { width: 72px; height: 72px; border-radius: var(--radius-sm); object-fit: cover; flex-shrink: 0; }
+    .cart-item-info { flex: 1; }
+    .cart-item-info h4 { font-size: .92rem; font-weight: 700; margin-bottom: 4px; }
+    .cart-item-info span { font-size: .8rem; color: var(--gray-text); }
+    .cart-item-qty { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+    .qty-btn { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid rgba(196,82,107,.25); background: var(--white); color: var(--rose); font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+    .qty-btn:hover { background: var(--rose); color: var(--white); border-color: var(--rose); }
+    .qty-num { font-size: .88rem; font-weight: 700; min-width: 24px; text-align: center; }
+    .cart-item-price { font-weight: 700; color: var(--rose); font-size: .95rem; white-space: nowrap; }
+    .remove-btn { background: none; border: none; color: var(--gray-mid); cursor: pointer; font-size: 1.1rem; padding: 4px; transition: color var(--transition); }
+    .remove-btn:hover { color: var(--rose); }
+
+    .cart-empty { text-align: center; padding: 48px 24px; }
+    .cart-empty p { color: var(--gray-text); margin: 12px 0 24px; }
+
+    /* ORDER SUMMARY & PAYMENT */
+    .summary-row { display: flex; justify-content: space-between; font-size: .9rem; padding: 8px 0; color: var(--gray-text); }
+    .summary-row.total { font-size: 1.1rem; font-weight: 700; color: var(--dark); border-top: 1.5px solid rgba(196,82,107,.12); margin-top: 8px; padding-top: 16px; }
+    .summary-row.total span:last-child { color: var(--rose); }
+
+    .divider { border: none; border-top: 1px solid rgba(196,82,107,.1); margin: 24px 0; }
+
+    /* FORM */
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .form-group label { font-size: .8rem; font-weight: 600; color: var(--dark); }
+    .form-group label span { color: var(--rose); }
+    .form-group input, .form-group textarea {
+      padding: 12px 14px; border: 1.5px solid rgba(196,82,107,.18); border-radius: var(--radius-sm);
+      font-family: 'Montserrat', sans-serif; font-size: .88rem; color: var(--dark);
+      background: var(--white); transition: border-color var(--transition), box-shadow var(--transition); outline: none;
+    }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--rose); box-shadow: 0 0 0 3px rgba(196,82,107,.1); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* STRIPE */
+    .stripe-label { font-size: .8rem; font-weight: 600; color: var(--dark); margin-bottom: 8px; display: block; }
+    .stripe-label span { color: var(--rose); }
+    #card-element {
+      padding: 13px 14px; border: 1.5px solid rgba(196,82,107,.18); border-radius: var(--radius-sm);
+      background: var(--white); transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    #card-element.StripeElement--focus { border-color: var(--rose); box-shadow: 0 0 0 3px rgba(196,82,107,.1); }
+    #card-element.StripeElement--invalid { border-color: #e53e3e; }
+    #card-errors { color: #e53e3e; font-size: .8rem; margin-top: 6px; min-height: 18px; }
+
+    .test-card-note { background: var(--blush-lite); border-radius: var(--radius-sm); padding: 10px 14px; font-size: .78rem; color: var(--gray-text); margin-top: 10px; border: 1px solid rgba(196,82,107,.1); }
+    .test-card-note strong { color: var(--rose-deep); }
+
+    .pay-btn-wrap { margin-top: 24px; }
+    #payBtn { width: 100%; justify-content: center; padding: 16px; font-size: 1rem; }
+
+    .secure-note { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: .75rem; color: var(--gray-mid); margin-top: 12px; }
+
+    /* SPINNER */
+    .spinner { display: none; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,.4); border-top-color: var(--white); border-radius: 50%; animation: spin .6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* FOOTER */
+    .footer { background: var(--dark); color: rgba(255,255,255,.7); padding: 40px 0 28px; }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-bottom p { font-size: .82rem; }
+    .heart { color: #F2A8BB; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .nav-links, .nav-right > .btn { display: none; }
+      .hamburger { display: flex; }
+      .checkout-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="navbar">
+    <div class="container nav-inner">
+      <a href="index.html"><img class="nav-logo" src="brand_assets/616814509_4232158440434450_2719695261011975037_n.jpg" alt="DM Keepsies" /></a>
+      <ul class="nav-links">
+        <li><a href="index.html#events">Events</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="products.html">Products</a></li>
+        <li><a href="index.html#how">How It Works</a></li>
+        <li><a href="contact.html">Contact Us</a></li>
+      </ul>
+      <div class="nav-right">
+        <a href="checkout.html" class="nav-cart active">
+          🛒 Cart <span class="cart-badge" id="cartBadge">0</span>
+        </a>
+      </div>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="index.html#events" onclick="closeMobile()">Events</a>
+      <a href="about.html" onclick="closeMobile()">About</a>
+      <a href="products.html" onclick="closeMobile()">Products</a>
+      <a href="index.html#how" onclick="closeMobile()">How It Works</a>
+      <a href="contact.html" onclick="closeMobile()">Contact Us</a>
+      <a href="checkout.html" class="btn btn-primary" onclick="closeMobile()">🛒 Cart</a>
+    </div>
+  </nav>
+
+  <div class="page-wrap">
+
+    <div class="page-header">
+      <div class="container">
+        <h1>Your Cart</h1>
+        <p class="breadcrumb"><a href="index.html">Home</a> → <a href="products.html">Products</a> → Checkout</p>
+      </div>
+    </div>
+
+    <section class="checkout-section">
+      <div class="container">
+        <div class="checkout-grid">
+
+          <!-- CART ITEMS -->
+          <div class="checkout-card">
+            <h2>Order Items</h2>
+            <div id="cartItemsList"></div>
+            <div id="cartEmpty" class="cart-empty" style="display:none">
+              <div style="font-size:3rem">🛒</div>
+              <p>Your cart is empty.</p>
+              <a href="products.html" class="btn btn-primary btn-sm">Browse Products</a>
+            </div>
+          </div>
+
+          <!-- PAYMENT PANEL -->
+          <div>
+            <!-- Order Summary -->
+            <div class="checkout-card" style="margin-bottom:20px">
+              <h2>Order Summary</h2>
+              <div id="summaryRows"></div>
+              <div class="summary-row total">
+                <span>Total</span>
+                <span id="summaryTotal">₱0.00</span>
+              </div>
+            </div>
+
+            <!-- Payment Form -->
+            <div class="checkout-card" id="paymentPanel">
+              <h2>Payment Details</h2>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="firstName">First Name <span>*</span></label>
+                  <input type="text" id="firstName" placeholder="May Ann" required />
+                </div>
+                <div class="form-group">
+                  <label for="lastName">Last Name <span>*</span></label>
+                  <input type="text" id="lastName" placeholder="Acorda" required />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="email">Email Address <span>*</span></label>
+                <input type="email" id="email" placeholder="you@email.com" required />
+              </div>
+              <div class="form-group">
+                <label for="notes">Order Notes</label>
+                <input type="text" id="notes" placeholder="Theme, colors, design requests..." />
+              </div>
+
+              <hr class="divider" />
+
+              <label class="stripe-label">Card Details <span>*</span></label>
+              <div id="card-element"></div>
+              <div id="card-errors"></div>
+              <div class="test-card-note">
+                🧪 <strong>Test mode:</strong> Use card <strong>4242 4242 4242 4242</strong>, any future expiry, any CVC.
+              </div>
+
+              <div class="pay-btn-wrap">
+                <button class="btn btn-primary" id="payBtn" disabled>
+                  <span id="payBtnText">Add items to pay</span>
+                  <div class="spinner" id="spinner"></div>
+                </button>
+              </div>
+              <div class="secure-note">🔒 Secured by Stripe · Your payment info is encrypted</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer class="footer">
+    <div class="container footer-bottom">
+      <p>© 2026 DM Keepsies. All rights reserved.</p>
+      <p>Made with <span class="heart">♥</span> for every special moment</p>
+    </div>
+  </footer>
+
+  <script src="js/cart.js"></script>
+  <script>
+    const PUBLISHABLE_KEY = 'pk_test_51TdvMqRzaznEyq6DlBN57sDGcKa2WEpazlGDl7vIoPcOOVMlTtGGQpY4XX97tvdps9WE4TgbSUUvUbsjp2Bpwx7200zCvfnuuO';
+    const stripe = Stripe(PUBLISHABLE_KEY);
+    const elements = stripe.elements();
+
+    const cardElement = elements.create('card', {
+      style: {
+        base: {
+          fontFamily: 'Montserrat, sans-serif',
+          fontSize: '15px',
+          color: '#2C2022',
+          '::placeholder': { color: '#B0A0A5' },
+        },
+        invalid: { color: '#e53e3e' }
+      }
+    });
+    cardElement.mount('#card-element');
+    cardElement.on('change', e => {
+      document.getElementById('card-errors').textContent = e.error ? e.error.message : '';
+    });
+
+    // Nav
+    const nav = document.getElementById('navbar');
+    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 20));
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    hamburger.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+    function closeMobile() { mobileMenu.classList.remove('open'); }
+
+    function formatPrice(p) { return '₱' + p.toLocaleString('en-PH', { minimumFractionDigits: 2 }); }
+
+    function renderCart() {
+      const cart = Cart.get();
+      const list = document.getElementById('cartItemsList');
+      const empty = document.getElementById('cartEmpty');
+      const payBtn = document.getElementById('payBtn');
+      const payBtnText = document.getElementById('payBtnText');
+      const summaryRows = document.getElementById('summaryRows');
+      const summaryTotal = document.getElementById('summaryTotal');
+
+      if (cart.length === 0) {
+        list.innerHTML = '';
+        empty.style.display = 'block';
+        summaryRows.innerHTML = '';
+        summaryTotal.textContent = '₱0.00';
+        payBtn.disabled = true;
+        payBtnText.textContent = 'Add items to pay';
+        return;
+      }
+
+      empty.style.display = 'none';
+      const total = Cart.total();
+
+      list.innerHTML = cart.map(item => `
+        <div class="cart-item" id="item-${item.id}">
+          <img class="cart-item-img" src="${item.image}" alt="${item.name}" />
+          <div class="cart-item-info">
+            <h4>${item.name}</h4>
+            <span>${formatPrice(item.price)} / pc</span>
+            <div class="cart-item-qty">
+              <button class="qty-btn" onclick="changeQty('${item.id}', ${item.quantity - 1})">−</button>
+              <span class="qty-num">${item.quantity}</span>
+              <button class="qty-btn" onclick="changeQty('${item.id}', ${item.quantity + 1})">+</button>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+            <span class="cart-item-price">${formatPrice(item.price * item.quantity)}</span>
+            <button class="remove-btn" onclick="removeItem('${item.id}')" title="Remove">✕</button>
+          </div>
+        </div>
+      `).join('');
+
+      summaryRows.innerHTML = cart.map(item =>
+        `<div class="summary-row"><span>${item.name} ×${item.quantity}</span><span>${formatPrice(item.price * item.quantity)}</span></div>`
+      ).join('');
+      summaryTotal.textContent = formatPrice(total);
+
+      payBtn.disabled = false;
+      payBtnText.textContent = `Pay ${formatPrice(total)}`;
+    }
+
+    function changeQty(id, qty) {
+      Cart.updateQty(id, qty);
+      renderCart();
+    }
+
+    function removeItem(id) {
+      Cart.remove(id);
+      renderCart();
+    }
+
+    // Payment
+    document.getElementById('payBtn').addEventListener('click', async () => {
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
+      const email = document.getElementById('email').value.trim();
+
+      if (!firstName || !lastName || !email) {
+        document.getElementById('card-errors').textContent = 'Please fill in your name and email.';
+        return;
+      }
+
+      const payBtn = document.getElementById('payBtn');
+      const spinner = document.getElementById('spinner');
+      const payBtnText = document.getElementById('payBtnText');
+      payBtn.disabled = true;
+      payBtnText.textContent = 'Processing...';
+      spinner.style.display = 'block';
+      document.getElementById('card-errors').textContent = '';
+
+      try {
+        const total = Cart.total();
+        const items = Cart.get();
+
+        const res = await fetch('/api/create-payment-intent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: total, currency: 'php', items })
+        });
+
+        const { clientSecret, error: apiError } = await res.json();
+        if (apiError) throw new Error(apiError);
+
+        const result = await stripe.confirmCardPayment(clientSecret, {
+          payment_method: {
+            card: cardElement,
+            billing_details: {
+              name: `${firstName} ${lastName}`,
+              email
+            }
+          }
+        });
+
+        if (result.error) {
+          document.getElementById('card-errors').textContent = result.error.message;
+          payBtn.disabled = false;
+          payBtnText.textContent = `Pay ${formatPrice(total)}`;
+          spinner.style.display = 'none';
+        } else {
+          const notes = document.getElementById('notes').value;
+          const orderData = { name: `${firstName} ${lastName}`, email, notes, items, total };
+          localStorage.setItem('dmk_last_order', JSON.stringify(orderData));
+          Cart.clear();
+          window.location.href = 'success.html';
+        }
+      } catch (err) {
+        document.getElementById('card-errors').textContent = 'Something went wrong. Please try again.';
+        payBtn.disabled = false;
+        payBtnText.textContent = `Pay ${formatPrice(Cart.total())}`;
+        spinner.style.display = 'none';
+      }
+    });
+
+    renderCart();
+  </script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Confirmed – DM Keepsies</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --rose: #C4526B; --rose-deep: #A33D57; --rose-mid: #D4708A;
+      --pink-soft: #F2A8BB; --blush: #FDE8F0; --blush-lite: #FDF5F7;
+      --white: #FFFFFF; --gray-text: #6B5A60; --dark: #2C2022;
+      --radius-md: 16px; --radius-lg: 32px; --radius-pill: 999px;
+      --shadow-card: 0 8px 40px rgba(196,82,107,.13);
+    }
+    body { font-family: 'Montserrat', sans-serif; background: var(--blush-lite); color: var(--dark); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; }
+
+    .success-card {
+      background: var(--white); border-radius: var(--radius-lg); padding: 60px 48px;
+      box-shadow: var(--shadow-card); text-align: center; max-width: 540px; width: 100%;
+    }
+    .success-icon { font-size: 4rem; margin-bottom: 20px; animation: pop .4s ease; }
+    @keyframes pop { 0% { transform: scale(0); } 80% { transform: scale(1.15); } 100% { transform: scale(1); } }
+
+    .success-label { font-family: 'Dancing Script', cursive; font-size: 1.3rem; color: var(--rose-mid); margin-bottom: 8px; }
+    h1 { font-size: 2rem; font-weight: 700; color: var(--dark); margin-bottom: 12px; }
+    h1 span { color: var(--rose); }
+    .success-card > p { font-size: .95rem; color: var(--gray-text); line-height: 1.7; margin-bottom: 28px; }
+
+    .order-summary { background: var(--blush-lite); border-radius: var(--radius-md); padding: 20px 24px; text-align: left; margin-bottom: 32px; }
+    .order-summary h3 { font-size: .85rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--gray-text); margin-bottom: 14px; }
+    .order-row { display: flex; justify-content: space-between; font-size: .88rem; padding: 5px 0; }
+    .order-row.total { font-weight: 700; color: var(--rose); border-top: 1px solid rgba(196,82,107,.12); margin-top: 8px; padding-top: 12px; font-size: .95rem; }
+
+    .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 28px; border-radius: var(--radius-pill); font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: .9rem; cursor: pointer; transition: .3s ease; border: none; text-decoration: none; }
+    .btn-primary { background: var(--rose); color: var(--white); box-shadow: 0 4px 20px rgba(196,82,107,.35); }
+    .btn-primary:hover { background: var(--rose-deep); transform: translateY(-2px); }
+    .btn-outline { background: transparent; color: var(--rose); border: 2px solid var(--rose); }
+    .btn-outline:hover { background: var(--rose); color: var(--white); }
+
+    .logo { height: 64px; width: auto; margin: 0 auto 32px; display: block; background: var(--blush-lite); border-radius: 8px; padding: 6px 12px; }
+  </style>
+</head>
+<body>
+  <div class="success-card">
+    <img class="logo" src="brand_assets/616814509_4232158440434450_2719695261011975037_n.jpg" alt="DM Keepsies" />
+    <div class="success-icon">🎀</div>
+    <p class="success-label">Payment confirmed!</p>
+    <h1>Thank You for Your <span>Order!</span></h1>
+    <p>Your order has been received and we'll start working on your personalized keepsakes right away. We'll reach out to you via email to confirm your design details.</p>
+
+    <div class="order-summary" id="orderSummary"></div>
+
+    <div class="actions">
+      <a href="products.html" class="btn btn-outline">Browse More</a>
+      <a href="https://www.facebook.com/profile.php?id=61586949472102" class="btn btn-primary" target="_blank" rel="noopener">
+        💬 Message Us on Facebook
+      </a>
+    </div>
+  </div>
+
+  <script>
+    const order = JSON.parse(localStorage.getItem('dmk_last_order') || '{}');
+    const el = document.getElementById('orderSummary');
+
+    if (order.items && order.items.length > 0) {
+      el.innerHTML = `
+        <h3>Order Summary</h3>
+        ${order.items.map(i => `
+          <div class="order-row">
+            <span>${i.name} ×${i.quantity}</span>
+            <span>₱${(i.price * i.quantity).toLocaleString()}</span>
+          </div>
+        `).join('')}
+        <div class="order-row total">
+          <span>Total Paid</span>
+          <span>₱${order.total.toLocaleString()}</span>
+        </div>
+        ${order.name ? `<div class="order-row" style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(196,82,107,.12)"><span>Name</span><span>${order.name}</span></div>` : ''}
+        ${order.email ? `<div class="order-row"><span>Email</span><span>${order.email}</span></div>` : ''}
+        ${order.notes ? `<div class="order-row"><span>Notes</span><span>${order.notes}</span></div>` : ''}
+      `;
+    } else {
+      el.innerHTML = '<h3>Order Summary</h3><p style="font-size:.85rem;color:#6B5A60;margin-top:8px">Your order has been placed successfully.</p>';
+    }
+  </script>
+</body>
+</html>

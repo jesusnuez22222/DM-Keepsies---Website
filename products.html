@@ -491,6 +491,21 @@
     .reveal-delay-3 { transition-delay: .3s; }
     .reveal-delay-4 { transition-delay: .4s; }
 
+    /* ── CART NAV ── */
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .nav-cart { position: relative; display: flex; align-items: center; gap: 6px; font-size: .9rem; font-weight: 600; color: var(--rose); padding: 8px 14px; border-radius: var(--radius-pill); transition: background var(--transition); }
+    .nav-cart:hover { background: var(--blush); }
+    .cart-badge { background: var(--rose); color: var(--white); border-radius: 50%; width: 20px; height: 20px; font-size: .7rem; font-weight: 700; display: none; align-items: center; justify-content: center; }
+
+    /* ── ADD TO CART ── */
+    .add-to-cart-wrap { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .qty-control { display: flex; align-items: center; border: 1.5px solid rgba(196,82,107,.2); border-radius: var(--radius-pill); overflow: hidden; }
+    .qty-ctrl-btn { width: 32px; height: 32px; border: none; background: var(--white); color: var(--rose); font-size: 1.1rem; cursor: pointer; transition: background var(--transition); }
+    .qty-ctrl-btn:hover { background: var(--blush); }
+    .qty-ctrl-input { width: 40px; height: 32px; border: none; text-align: center; font-family: 'Montserrat', sans-serif; font-size: .85rem; font-weight: 700; color: var(--dark); background: var(--white); -moz-appearance: textfield; }
+    .qty-ctrl-input::-webkit-outer-spin-button, .qty-ctrl-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .add-to-cart-btn.added { background: #2d8a4e !important; box-shadow: 0 4px 16px rgba(45,138,78,.35) !important; }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 1024px) {
       .products-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
@@ -522,8 +537,10 @@
         <li><a href="index.html#how">How It Works</a></li>
         <li><a href="contact.html">Contact Us</a></li>
       </ul>
-      <div class="nav-cta">
-        <a href="contact.html" class="btn btn-primary btn-sm">Order Now</a>
+      <div class="nav-right">
+        <a href="checkout.html" class="nav-cart">
+          🛒 Cart <span class="cart-badge" id="cartBadge">0</span>
+        </a>
       </div>
       <button class="hamburger" id="hamburger" aria-label="Menu">
         <span></span><span></span><span></span>
@@ -535,7 +552,7 @@
       <a href="products.html" class="active" onclick="closeMobile()">Products</a>
       <a href="index.html#how" onclick="closeMobile()">How It Works</a>
       <a href="contact.html" onclick="closeMobile()">Contact Us</a>
-      <a href="contact.html" class="btn btn-primary" onclick="closeMobile()">Order Now</a>
+      <a href="checkout.html" class="btn btn-primary" onclick="closeMobile()">🛒 Cart</a>
     </div>
   </nav>
 
@@ -603,7 +620,18 @@
                 <div class="pricing-main">₱12 / piece</div>
                 <div class="pricing-bundle">Bundle: <strong>₱120 for 12pcs</strong></div>
               </div>
-              <a href="contact.html" class="btn btn-primary btn-sm">Order Now</a>
+              <div class="add-to-cart-wrap">
+                <div class="qty-control">
+                  <button class="qty-ctrl-btn" onclick="stepQty(this,-1)">−</button>
+                  <input class="qty-ctrl-input" type="number" value="1" min="1">
+                  <button class="qty-ctrl-btn" onclick="stepQty(this,1)">+</button>
+                </div>
+                <button class="btn btn-primary btn-sm add-to-cart-btn"
+                  data-id="candles" data-name="Personalized Candle Favors"
+                  data-price="12" data-image="brand_assets/candles-pink.jpg">
+                  🛒 Add to Cart
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -635,7 +663,18 @@
                 <div class="pricing-main">₱20 / piece</div>
                 <div class="pricing-bundle">ATM size or Facecut available</div>
               </div>
-              <a href="contact.html" class="btn btn-primary btn-sm">Order Now</a>
+              <div class="add-to-cart-wrap">
+                <div class="qty-control">
+                  <button class="qty-ctrl-btn" onclick="stepQty(this,-1)">−</button>
+                  <input class="qty-ctrl-input" type="number" value="1" min="1">
+                  <button class="qty-ctrl-btn" onclick="stepQty(this,1)">+</button>
+                </div>
+                <button class="btn btn-primary btn-sm add-to-cart-btn"
+                  data-id="refmagnet" data-name="Personalized Ref Magnet"
+                  data-price="20" data-image="brand_assets/christening-magnet-dino-pink.jpg">
+                  🛒 Add to Cart
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -667,7 +706,18 @@
                 <div class="pricing-main">₱20 / piece</div>
                 <div class="pricing-bundle">Custom photo &amp; design included</div>
               </div>
-              <a href="contact.html" class="btn btn-primary btn-sm">Order Now</a>
+              <div class="add-to-cart-wrap">
+                <div class="qty-control">
+                  <button class="qty-ctrl-btn" onclick="stepQty(this,-1)">−</button>
+                  <input class="qty-ctrl-input" type="number" value="1" min="1">
+                  <button class="qty-ctrl-btn" onclick="stepQty(this,1)">+</button>
+                </div>
+                <button class="btn btn-primary btn-sm add-to-cart-btn"
+                  data-id="keychain" data-name="Personalized Keychain"
+                  data-price="20" data-image="brand_assets/keychain-50th-pink.jpg">
+                  🛒 Add to Cart
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -699,7 +749,18 @@
                 <div class="pricing-main">₱35 / piece</div>
                 <div class="pricing-bundle">Gift-wrapped &amp; ribbon-tied</div>
               </div>
-              <a href="contact.html" class="btn btn-primary btn-sm">Order Now</a>
+              <div class="add-to-cart-wrap">
+                <div class="qty-control">
+                  <button class="qty-ctrl-btn" onclick="stepQty(this,-1)">−</button>
+                  <input class="qty-ctrl-input" type="number" value="1" min="1">
+                  <button class="qty-ctrl-btn" onclick="stepQty(this,1)">+</button>
+                </div>
+                <button class="btn btn-primary btn-sm add-to-cart-btn"
+                  data-id="shotglass" data-name="Personalized Shot Glass Favor"
+                  data-price="35" data-image="brand_assets/wedding-favor-candle-pink.jpg">
+                  🛒 Add to Cart
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -771,6 +832,7 @@
     </div>
   </footer>
 
+  <script src="js/cart.js"></script>
   <script>
     // Nav scroll
     const nav = document.getElementById('navbar');
@@ -791,6 +853,30 @@
       { threshold: 0.1 }
     );
     revealEls.forEach(el => observer.observe(el));
+
+    // Qty step buttons
+    function stepQty(btn, dir) {
+      const input = btn.parentElement.querySelector('.qty-ctrl-input');
+      input.value = Math.max(1, parseInt(input.value || 1) + dir);
+    }
+
+    // Add to Cart
+    document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const qty = parseInt(btn.closest('.product-footer').querySelector('.qty-ctrl-input').value) || 1;
+        Cart.add({
+          id:    btn.dataset.id,
+          name:  btn.dataset.name,
+          price: parseFloat(btn.dataset.price),
+          image: btn.dataset.image,
+          quantity: qty
+        });
+        const orig = btn.textContent;
+        btn.textContent = '✓ Added!';
+        btn.classList.add('added');
+        setTimeout(() => { btn.textContent = orig; btn.classList.remove('added'); }, 1500);
+      });
+    });
 
     // Filter tabs
     document.getElementById('filterTabs').addEventListener('click', e => {
