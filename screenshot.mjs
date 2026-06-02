@@ -14,7 +14,7 @@ const browser = await puppeteer.launch({
 });
 const page = await browser.newPage();
 await page.setViewport({ width: 1440, height: 900 });
-await page.goto('http://localhost:3000', { waitUntil: 'networkidle0' });
+await page.goto('http://localhost:8080', { waitUntil: 'networkidle0' });
 
 // Disable scroll-reveal so all sections are fully visible in screenshots
 await page.addStyleTag({
@@ -67,7 +67,7 @@ for (const [selector, filename] of sections) {
 
 // Full page (mobile)
 await page.setViewport({ width: 390, height: 844, isMobile: true });
-await page.goto('http://localhost:3000', { waitUntil: 'networkidle0' });
+await page.goto('http://localhost:8080', { waitUntil: 'networkidle0' });
 await page.addStyleTag({
   content: `.reveal { opacity: 1 !important; transform: none !important; transition: none !important; }`
 });

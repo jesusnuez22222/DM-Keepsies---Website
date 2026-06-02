@@ -138,7 +138,10 @@
     }
     .nav-links a:hover { color: var(--rose); }
     .nav-links a.active { color: var(--rose); font-weight: 700; }
-    .nav-cta { display: flex; align-items: center; gap: 12px; }
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .nav-cart { position: relative; display: flex; align-items: center; gap: 6px; font-size: .9rem; font-weight: 600; color: var(--rose); padding: 8px 14px; border-radius: var(--radius-pill); transition: background var(--transition); }
+    .nav-cart:hover { background: var(--blush); }
+    .cart-badge { background: var(--rose); color: var(--white); border-radius: 50%; width: 20px; height: 20px; font-size: .7rem; font-weight: 700; display: none; align-items: center; justify-content: center; }
     .hamburger {
       display: none;
       flex-direction: column;
@@ -503,8 +506,11 @@
         <li><a href="contact.html">Contact Us</a></li>
       </ul>
 
-      <div class="nav-cta">
-        <a href="index.html#order" class="btn btn-primary btn-sm">Order Now</a>
+      <div class="nav-right">
+        <a href="checkout.html" class="nav-cart">
+          🛒 <span class="cart-badge" id="cartBadge">0</span>
+        </a>
+        <a href="products.html" class="btn btn-primary btn-sm">Order Now</a>
       </div>
 
       <button class="hamburger" id="hamburger" aria-label="Menu">
@@ -518,7 +524,7 @@
       <a href="products.html" onclick="closeMobile()">Products</a>
       <a href="index.html#how" onclick="closeMobile()">How It Works</a>
       <a href="contact.html" onclick="closeMobile()">Contact Us</a>
-      <a href="index.html#order" class="btn btn-primary" onclick="closeMobile()">Order Now</a>
+      <a href="products.html" class="btn btn-primary" onclick="closeMobile()">Order Now</a>
     </div>
   </nav>
 
@@ -580,7 +586,7 @@
             <span class="pill">📦 Memorable</span>
           </div>
 
-          <a href="index.html#order" class="btn btn-primary">Work with May Ann</a>
+          <a href="products.html" class="btn btn-primary">Work with May Ann</a>
         </div>
 
         <div class="reveal reveal-delay-2">
@@ -679,7 +685,7 @@
             <li><a href="products.html">Our Products</a></li>
             <li><a href="index.html#how">How It Works</a></li>
             <li><a href="contact.html">Contact Us</a></li>
-            <li><a href="index.html#order">Order Now</a></li>
+            <li><a href="products.html">Order Now</a></li>
           </ul>
         </div>
       </div>
@@ -691,6 +697,7 @@
     </div>
   </footer>
 
+  <script src="js/cart.js"></script>
   <script>
     const nav = document.getElementById('navbar');
     window.addEventListener('scroll', () => {

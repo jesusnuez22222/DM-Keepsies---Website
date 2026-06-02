@@ -138,7 +138,10 @@
     }
     .nav-links a:hover { color: var(--rose); }
 
-    .nav-cta { display: flex; align-items: center; gap: 12px; }
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .nav-cart { position: relative; display: flex; align-items: center; gap: 6px; font-size: .9rem; font-weight: 600; color: var(--rose); padding: 8px 14px; border-radius: var(--radius-pill); transition: background var(--transition); }
+    .nav-cart:hover { background: var(--blush); }
+    .cart-badge { background: var(--rose); color: var(--white); border-radius: 50%; width: 20px; height: 20px; font-size: .7rem; font-weight: 700; display: none; align-items: center; justify-content: center; }
 
     .hamburger {
       display: none;
@@ -267,38 +270,25 @@
     }
     .hero-card-tall { grid-row: span 2; }
 
-    /* placeholder cards with gradient backgrounds */
+    /* hero photo cards */
     .hero-card-placeholder {
       border-radius: var(--radius-md);
       overflow: hidden;
       box-shadow: var(--shadow-card);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 28px 20px;
-      text-align: center;
-      gap: 10px;
+      position: relative;
     }
-    .hcp-1 {
-      grid-row: span 2;
-      background: linear-gradient(145deg, var(--blush) 0%, #f9d4e2 100%);
+    .hcp-1 { grid-row: span 2; min-height: 300px; }
+    .hcp-2, .hcp-3 { min-height: 140px; }
+    .hero-card-placeholder img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; transition: transform .5s ease; }
+    .hero-card-placeholder:hover img { transform: scale(1.05); }
+    .hcp-overlay {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, rgba(44,32,34,.72) 0%, transparent 100%);
+      padding: 12px 14px 10px;
     }
-    .hcp-2 { background: linear-gradient(145deg, #fde8f0 0%, #f5c8d8 100%); }
-    .hcp-3 { background: linear-gradient(145deg, #f9e0ea 0%, #f0bad0 100%); }
-
-    .hcp-icon { font-size: 2.4rem; }
-    .hcp-label {
-      font-family: 'Dancing Script', cursive;
-      font-size: 1.15rem;
-      color: var(--rose);
-      font-weight: 600;
-    }
-    .hcp-sub {
-      font-size: .78rem;
-      color: var(--gray-text);
-      font-weight: 500;
-    }
+    .hcp-label { font-family: 'Dancing Script', cursive; font-size: 1rem; color: var(--white); font-weight: 600; display: block; }
+    .hcp-sub { font-size: .72rem; color: rgba(255,255,255,.85); font-weight: 500; }
 
     /* floating badge */
     .hero-badge {
@@ -891,6 +881,23 @@
       justify-content: center;
     }
 
+    /* ── FAQ ───────────────────────────────────────────────── */
+    .faq { padding: 100px 0; background: var(--blush-lite); }
+    .faq-header { text-align: center; margin-bottom: 56px; }
+    .faq-grid { max-width: 780px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+    .faq-item { background: var(--white); border-radius: var(--radius-md); border: 1.5px solid rgba(196,82,107,.08); overflow: hidden; transition: border-color var(--transition); }
+    .faq-item:hover { border-color: rgba(196,82,107,.2); }
+    .faq-question { width: 100%; background: none; border: none; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; cursor: pointer; font-family: 'Montserrat', sans-serif; font-size: .95rem; font-weight: 600; color: var(--dark); text-align: left; }
+    .faq-question:hover { color: var(--rose); }
+    .faq-icon { font-size: 1.2rem; color: var(--rose); flex-shrink: 0; transition: transform var(--transition); }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height .35s ease, padding .35s ease; padding: 0 24px; }
+    .faq-item.open .faq-answer { max-height: 200px; padding: 0 24px 20px; }
+    .faq-answer p { font-size: .9rem; color: var(--gray-text); line-height: 1.7; }
+
+    /* ── MOBILE SEE ALL ─────────────────────────────────────── */
+    .products-see-all { display: none; text-align: center; margin-top: 28px; }
+
     /* ── SCROLL REVEAL ─────────────────────────────────────── */
     .reveal {
       opacity: 0;
@@ -941,6 +948,8 @@
       .events-grid   { grid-template-columns: 1fr; }
       .products-grid { grid-template-columns: 1fr; }
       .hero-visual   { grid-template-columns: 1fr 1fr; }
+      .product-card.hidden-mobile { display: none; }
+      .products-see-all { display: block; }
     }
   </style>
 </head>
@@ -965,8 +974,11 @@
         <li><a href="contact.html">Contact Us</a></li>
       </ul>
 
-      <div class="nav-cta">
-        <a href="#order" class="btn btn-primary btn-sm">Order Now</a>
+      <div class="nav-right">
+        <a href="checkout.html" class="nav-cart">
+          🛒 <span class="cart-badge" id="cartBadge">0</span>
+        </a>
+        <a href="products.html" class="btn btn-primary btn-sm">Order Now</a>
       </div>
 
       <button class="hamburger" id="hamburger" aria-label="Menu">
@@ -980,7 +992,7 @@
       <a href="products.html" onclick="closeMobile()">Products</a>
       <a href="#how"      onclick="closeMobile()">How It Works</a>
       <a href="contact.html" onclick="closeMobile()">Contact Us</a>
-      <a href="#order" class="btn btn-primary" onclick="closeMobile()">Order Now</a>
+      <a href="products.html" class="btn btn-primary" onclick="closeMobile()">Order Now</a>
     </div>
   </nav>
 
@@ -1002,8 +1014,8 @@
             birthdays, and every milestone worth remembering.
           </p>
           <div class="hero-actions">
-            <a href="#order"    class="btn btn-primary">Order Your Keepsakes</a>
-            <a href="#products" class="btn btn-outline">View Collections</a>
+            <a href="products.html"    class="btn btn-primary">Order Your Keepsakes</a>
+            <a href="products.html" class="btn btn-outline">View Collections</a>
           </div>
 
           <div class="hero-trust">
@@ -1025,19 +1037,25 @@
         <!-- Visual cards -->
         <div class="hero-visual">
           <div class="hero-card-placeholder hcp-1">
-            <div class="hcp-icon">💍</div>
-            <div class="hcp-label">Wedding Favors</div>
-            <div class="hcp-sub">Custom keepsakes for your big day</div>
+            <img src="brand_assets/candles-pink.jpg" alt="Personalized Candle Favors" />
+            <div class="hcp-overlay">
+              <span class="hcp-label">Candle Favors</span>
+              <span class="hcp-sub">From ₱12/pc</span>
+            </div>
           </div>
           <div class="hero-card-placeholder hcp-2">
-            <div class="hcp-icon">🎀</div>
-            <div class="hcp-label">Baptism Tokens</div>
-            <div class="hcp-sub">Blessed & personalized</div>
+            <img src="brand_assets/christening-magnet-dino-pink.jpg" alt="Personalized Ref Magnet" />
+            <div class="hcp-overlay">
+              <span class="hcp-label">Ref Magnets</span>
+              <span class="hcp-sub">₱20/pc</span>
+            </div>
           </div>
           <div class="hero-card-placeholder hcp-3">
-            <div class="hcp-icon">🎂</div>
-            <div class="hcp-label">Birthday Mementos</div>
-            <div class="hcp-sub">Celebrate every milestone</div>
+            <img src="brand_assets/birthday-hat-pink.jpg" alt="Personalized Birthday Hat" />
+            <div class="hcp-overlay">
+              <span class="hcp-label">Birthday Hats</span>
+              <span class="hcp-sub">Fully customizable</span>
+            </div>
           </div>
         </div>
 
@@ -1139,7 +1157,7 @@
           </div>
         </div>
 
-        <div class="product-card reveal reveal-delay-1">
+        <div class="product-card hidden-mobile reveal reveal-delay-1">
           <div class="product-img">
             <img src="brand_assets/wedding-favor-candle-pink.jpg" alt="Personalized Shot Glass" />
             <span class="product-tag">All Events</span>
@@ -1154,7 +1172,7 @@
           </div>
         </div>
 
-        <div class="product-card reveal reveal-delay-2">
+        <div class="product-card hidden-mobile reveal reveal-delay-2">
           <div class="product-img">
             <img src="brand_assets/debut-fan-pink.jpg" alt="Personalized Debut Fan" />
             <span class="product-tag">All Events</span>
@@ -1163,13 +1181,13 @@
             <h3>Personalized Debut Fan</h3>
             <p>Elegant printed fans with custom photo, message, and design. A beautiful keepsake for debut celebrations.</p>
             <div class="product-footer">
-              <div class="product-price">Contact Us <span>for pricing</span></div>
-              <a href="contact.html" class="btn btn-primary btn-sm">Inquire</a>
+              <div class="product-price">₱20<span>/pc</span></div>
+              <a href="products.html" class="btn btn-primary btn-sm">View</a>
             </div>
           </div>
         </div>
 
-        <div class="product-card reveal reveal-delay-3">
+        <div class="product-card hidden-mobile reveal reveal-delay-3">
           <div class="product-img">
             <img src="brand_assets/birthday-hat-pink.jpg" alt="Personalized Birthday Hat" />
             <span class="product-tag">All Events</span>
@@ -1181,6 +1199,88 @@
               <div class="product-price">Contact Us <span>for pricing</span></div>
               <a href="contact.html" class="btn btn-primary btn-sm">Inquire</a>
             </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="products-see-all" id="seeAllWrap">
+        <a href="products.html" class="btn btn-outline">See All Products →</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─────────────── FAQ ─────────────── -->
+  <section class="faq" id="faq">
+    <div class="container">
+      <div class="faq-header reveal">
+        <span class="section-label">Got questions?</span>
+        <h2 class="section-title">Frequently Asked <span>Questions</span></h2>
+        <p style="color:var(--gray-text);margin-top:12px;max-width:500px;margin-left:auto;margin-right:auto;font-size:.95rem;">
+          Everything you need to know before placing your order.
+        </p>
+      </div>
+
+      <div class="faq-grid reveal">
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            How long does it take to complete an order?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Processing time is typically 3–5 business days after your design is approved. Rush orders may be accommodated — just message us and we'll do our best!</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            What details do I need to provide when ordering?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Please share: the celebrant's name, event date, venue (optional), preferred theme or colors, quantity, and any photos you'd like included. The more details, the better!</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            Is there a minimum order quantity?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>There is no strict minimum — we accept small and large orders alike. However, bulk orders of 50+ pieces may qualify for special pricing. Message us to inquire!</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            Do you offer delivery?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Yes! We ship nationwide across the Philippines via courier. Shipping fees apply and vary by location. Local pickup in Davao is also available.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            Can I request any theme or design?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Absolutely! Every keepsake is fully customizable. Share your theme, inspiration photos, or specific requests and we'll bring your vision to life.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            What payment methods do you accept?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>We accept online payments via our website (card payments). You can also message us on Facebook to arrange GCash, Maya, or bank transfer payments.</p>
           </div>
         </div>
 
@@ -1366,7 +1466,7 @@
             <li><a href="products.html">Our Products</a></li>
             <li><a href="#how">How It Works</a></li>
             <li><a href="contact.html">Contact Us</a></li>
-            <li><a href="#order">Order Now</a></li>
+            <li><a href="products.html">Order Now</a></li>
           </ul>
         </div>
 
@@ -1379,6 +1479,7 @@
     </div>
   </footer>
 
+  <script src="js/cart.js"></script>
   <script>
     // Sticky nav shadow
     const nav = document.getElementById('navbar');
@@ -1394,6 +1495,14 @@
     });
     function closeMobile() {
       mobileMenu.classList.remove('open');
+    }
+
+    // FAQ accordion
+    function toggleFaq(btn) {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
     }
 
     // Scroll reveal
