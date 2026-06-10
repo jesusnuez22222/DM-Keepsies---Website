@@ -1028,6 +1028,33 @@
       .orb { display: none; }
     }
 
+    /* ── AUTH NAV ──────────────────────────────────────────── */
+    .nav-user-greeting {
+      font-size: .85rem; font-weight: 600; color: var(--berry);
+      white-space: nowrap;
+    }
+    .nav-logout-btn {
+      padding: 6px 14px; font-size: .8rem; font-weight: 600;
+      border-radius: var(--radius-pill);
+      border: 1.5px solid var(--rose-pink);
+      background: transparent; color: var(--deep-rose);
+      cursor: pointer; transition: background var(--transition), color var(--transition);
+      font-family: 'Montserrat', sans-serif;
+    }
+    .nav-logout-btn:hover { background: var(--rose-pink); color: var(--white); }
+    .mobile-greeting {
+      padding: 12px 24px; font-size: .88rem; font-weight: 600; color: var(--berry);
+    }
+    .mobile-logout-btn {
+      margin: 0 24px 4px;
+      padding: 10px 18px; font-size: .88rem; font-weight: 600;
+      border-radius: var(--radius-pill);
+      border: 1.5px solid var(--rose-pink);
+      background: transparent; color: var(--deep-rose);
+      cursor: pointer; font-family: 'Montserrat', sans-serif;
+      text-align: center;
+    }
+
     /* ── REDUCED MOTION ────────────────────────────────────── */
     @media (prefers-reduced-motion: reduce) {
       .orb { animation: none; }
@@ -1075,6 +1102,8 @@
         <a href="checkout.html" class="nav-cart">
           🛒 <span class="cart-badge" id="cartBadge">0</span>
         </a>
+        <a href="login.html" class="btn btn-sm btn-outline" id="navLoginBtn">Login</a>
+        <div id="navUserArea" style="display:none;align-items:center;gap:10px;"></div>
         <a href="products.html" class="btn btn-primary btn-sm">Order Now</a>
       </div>
 
@@ -1089,6 +1118,8 @@
       <a href="products.html" onclick="closeMobile()">Products</a>
       <a href="#how"      onclick="closeMobile()">How It Works</a>
       <a href="contact.html" onclick="closeMobile()">Contact Us</a>
+      <a href="login.html" class="btn btn-outline" id="mobileLoginBtn" onclick="closeMobile()">Login</a>
+      <div id="mobileUserArea" style="display:none;flex-direction:column;gap:0;"></div>
       <a href="products.html" class="btn btn-primary" onclick="closeMobile()">Order Now</a>
     </div>
   </nav>
@@ -1927,5 +1958,9 @@
     init();
   })();
   </script>
+
+  <!-- Auth state -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="js/auth.js"></script>
 </body>
 </html>

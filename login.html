@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login – DM Keepsies</title>
+  <meta name="description" content="Sign in or create your DM Keepsies account." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --canvas:      #FFF3F7;
+      --canvas-deep: #FBDFE9;
+      --rose-pink:   #F2789F;
+      --hot-rose:    #ED4F86;
+      --deep-rose:   #D6336C;
+      --berry:       #8E2A55;
+      --dark-plum:   #3D1022;
+      --white:       #FFFFFF;
+      --gray-text:   #6B5A60;
+      --radius-pill: 999px;
+      --radius-md:   16px;
+      --transition:  .3s ease;
+      --btn-glow:    0 0 28px rgba(237,79,134,0.7), 0 6px 18px rgba(214,51,108,0.45);
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      33%       { transform: translateY(-18px) scale(1.03); }
+      66%       { transform: translateY(10px) scale(0.97); }
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      color: var(--dark-plum);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background:
+        radial-gradient(ellipse 75% 45% at 50% 0%, rgba(242,120,159,0.28) 0%, transparent 60%),
+        radial-gradient(ellipse 45% 40% at 10% 55%, rgba(237,79,134,0.14) 0%, transparent 60%),
+        radial-gradient(ellipse 55% 45% at 90% 65%, rgba(242,120,159,0.16) 0%, transparent 60%),
+        linear-gradient(180deg, var(--canvas) 0%, var(--canvas-deep) 100%);
+      background-attachment: fixed;
+      overflow-x: hidden;
+    }
+
+    /* orbs */
+    .orb {
+      position: fixed; border-radius: 50%; filter: blur(60px);
+      pointer-events: none; z-index: 0;
+      animation: float 10s ease-in-out infinite;
+    }
+    .orb-1 { width: 440px; height: 440px; top: -120px; left: -100px;
+      background: radial-gradient(circle, rgba(242,120,159,0.38), transparent 70%);
+      animation-duration: 11s; }
+    .orb-2 { width: 360px; height: 360px; bottom: -80px; right: -80px;
+      background: radial-gradient(circle, rgba(237,79,134,0.28), transparent 70%);
+      animation-duration: 14s; animation-delay: -4s; }
+
+    /* back link */
+    .back-link {
+      position: fixed; top: 24px; left: 28px; z-index: 10;
+      display: flex; align-items: center; gap: 6px;
+      font-size: .85rem; font-weight: 600; color: var(--berry);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+    .back-link:hover { color: var(--hot-rose); }
+    .back-link svg { flex-shrink: 0; }
+
+    /* card */
+    .card {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 460px;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(242,120,159,0.45);
+      border-radius: 24px;
+      box-shadow: 0 0 40px rgba(242,120,159,0.25), 0 16px 48px rgba(214,51,108,0.15);
+      overflow: hidden;
+    }
+
+    /* card header */
+    .card-header {
+      background: linear-gradient(135deg, var(--deep-rose) 0%, var(--hot-rose) 50%, var(--rose-pink) 100%);
+      padding: 32px 40px 28px;
+      text-align: center;
+    }
+    .card-logo {
+      height: 70px; width: auto;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.18);
+      padding: 6px 10px;
+      margin: 0 auto 12px;
+      display: block;
+    }
+    .card-tagline {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.9);
+    }
+
+    /* tabs */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid rgba(242,120,159,0.25);
+    }
+    .tab {
+      flex: 1; padding: 16px;
+      background: none; border: none; cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-size: .9rem; font-weight: 600;
+      color: var(--berry);
+      transition: color var(--transition), background var(--transition);
+    }
+    .tab:hover { background: rgba(242,120,159,0.06); color: var(--hot-rose); }
+    .tab.active {
+      color: var(--deep-rose);
+      border-bottom: 2px solid var(--deep-rose);
+      margin-bottom: -1px;
+    }
+
+    /* body */
+    .card-body { padding: 32px 36px 36px; }
+
+    /* form */
+    .form { display: flex; flex-direction: column; gap: 18px; }
+    .form.hidden { display: none; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label {
+      font-size: .82rem; font-weight: 600;
+      color: var(--berry);
+      letter-spacing: .02em;
+    }
+    .field input {
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1.5px solid rgba(242,120,159,0.35);
+      background: rgba(255,255,255,0.8);
+      font-family: 'Montserrat', sans-serif;
+      font-size: .92rem;
+      color: var(--dark-plum);
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none;
+    }
+    .field input::placeholder { color: rgba(142,42,85,0.35); }
+    .field input:focus {
+      border-color: var(--hot-rose);
+      box-shadow: 0 0 0 3px rgba(237,79,134,0.15);
+      background: var(--white);
+    }
+
+    /* submit button */
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      border-radius: var(--radius-pill);
+      border: none; cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-size: .95rem; font-weight: 700;
+      color: var(--white);
+      background: linear-gradient(135deg, var(--rose-pink) 0%, var(--hot-rose) 50%, var(--deep-rose) 100%);
+      box-shadow: var(--btn-glow);
+      transition: filter var(--transition), transform var(--transition), box-shadow var(--transition);
+      margin-top: 4px;
+    }
+    .btn-submit:hover {
+      filter: brightness(1.1);
+      transform: translateY(-2px);
+      box-shadow: 0 0 36px rgba(237,79,134,0.85), 0 8px 24px rgba(214,51,108,0.6);
+    }
+    .btn-submit:disabled {
+      opacity: .65; cursor: not-allowed;
+      transform: none; filter: none;
+    }
+
+    /* messages */
+    .msg {
+      display: none;
+      padding: 11px 16px;
+      border-radius: 12px;
+      font-size: .85rem;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+    .msg.error   { display: block; background: #FEF0F1; color: #A01020; border: 1px solid #F9C5C5; }
+    .msg.success { display: block; background: #F0FEF4; color: #186535; border: 1px solid #C5F9D4; }
+
+    /* divider */
+    .divider {
+      text-align: center;
+      font-size: .78rem;
+      color: rgba(142,42,85,0.45);
+      margin: 4px 0 0;
+    }
+    .divider a { color: var(--hot-rose); font-weight: 600; text-decoration: none; }
+    .divider a:hover { text-decoration: underline; }
+
+    /* spinner inside button */
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 480px) {
+      .card-body { padding: 24px 20px 28px; }
+      .card-header { padding: 24px 20px 20px; }
+      .orb { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .orb { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="orb orb-1" aria-hidden="true"></div>
+  <div class="orb orb-2" aria-hidden="true"></div>
+
+  <a href="index.html" class="back-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    Back to website
+  </a>
+
+  <div class="card">
+
+    <!-- Header -->
+    <div class="card-header">
+      <img class="card-logo"
+        src="brand_assets/616814509_4232158440434450_2719695261011975037_n.jpg"
+        alt="DM Keepsies" />
+      <p class="card-tagline">Handcrafted with love</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" id="tabSignIn" onclick="switchTab('signin')">Sign In</button>
+      <button class="tab"        id="tabSignUp" onclick="switchTab('signup')">Create Account</button>
+    </div>
+
+    <!-- Body -->
+    <div class="card-body">
+
+      <!-- Sign In form -->
+      <form class="form" id="formSignIn" onsubmit="handleSignIn(event)">
+        <div id="msgSignIn" class="msg"></div>
+
+        <div class="field">
+          <label for="siEmail">Email address</label>
+          <input id="siEmail" type="email" placeholder="you@example.com" required autocomplete="email" />
+        </div>
+        <div class="field">
+          <label for="siPass">Password</label>
+          <input id="siPass" type="password" placeholder="Your password" required autocomplete="current-password" />
+        </div>
+
+        <button type="submit" class="btn-submit" id="btnSignIn">Sign In</button>
+
+        <p class="divider">
+          Don't have an account? <a href="#" onclick="switchTab('signup');return false;">Create one</a>
+        </p>
+      </form>
+
+      <!-- Sign Up form -->
+      <form class="form hidden" id="formSignUp" onsubmit="handleSignUp(event)">
+        <div id="msgSignUp" class="msg"></div>
+
+        <div class="field">
+          <label for="suName">Full name</label>
+          <input id="suName" type="text" placeholder="May Ann Acorda" required autocomplete="name" />
+        </div>
+        <div class="field">
+          <label for="suEmail">Email address</label>
+          <input id="suEmail" type="email" placeholder="you@example.com" required autocomplete="email" />
+        </div>
+        <div class="field">
+          <label for="suPass">Password</label>
+          <input id="suPass" type="password" placeholder="At least 6 characters" required autocomplete="new-password" minlength="6" />
+        </div>
+        <div class="field">
+          <label for="suConfirm">Confirm password</label>
+          <input id="suConfirm" type="password" placeholder="Repeat password" required autocomplete="new-password" />
+        </div>
+
+        <button type="submit" class="btn-submit" id="btnSignUp">Create Account</button>
+
+        <p class="divider">
+          Already have an account? <a href="#" onclick="switchTab('signin');return false;">Sign in</a>
+        </p>
+      </form>
+
+    </div><!-- /card-body -->
+  </div><!-- /card -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>
+    var SUPABASE_URL = 'https://boxudirhejtzklnpnxfw.supabase.co';
+    var SUPABASE_KEY = 'sb_publishable_j9kJoHJXwKXQcXY-ginFKQ_p5eilcPr';
+    var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    /* ── redirect if already logged in ── */
+    sb.auth.getUser().then(function(res) {
+      if (res.data && res.data.user) window.location.replace('index.html');
+    });
+
+    /* ── tab switcher ── */
+    function switchTab(tab) {
+      var isSignIn = tab === 'signin';
+      document.getElementById('tabSignIn').classList.toggle('active', isSignIn);
+      document.getElementById('tabSignUp').classList.toggle('active', !isSignIn);
+      document.getElementById('formSignIn').classList.toggle('hidden', !isSignIn);
+      document.getElementById('formSignUp').classList.toggle('hidden', isSignIn);
+      clearMsg('msgSignIn');
+      clearMsg('msgSignUp');
+    }
+
+    /* ── helpers ── */
+    function showMsg(id, text, type) {
+      var el = document.getElementById(id);
+      el.textContent = text;
+      el.className = 'msg ' + type;
+    }
+    function clearMsg(id) {
+      var el = document.getElementById(id);
+      el.textContent = '';
+      el.className = 'msg';
+    }
+    function setLoading(btnId, loading, label) {
+      var btn = document.getElementById(btnId);
+      btn.disabled = loading;
+      btn.innerHTML = loading
+        ? '<span class="spinner"></span>Please wait…'
+        : label;
+    }
+
+    /* ── sign in ── */
+    async function handleSignIn(e) {
+      e.preventDefault();
+      clearMsg('msgSignIn');
+      var email = document.getElementById('siEmail').value.trim();
+      var pass  = document.getElementById('siPass').value;
+
+      setLoading('btnSignIn', true, 'Sign In');
+      var { error } = await sb.auth.signInWithPassword({ email: email, password: pass });
+      setLoading('btnSignIn', false, 'Sign In');
+
+      if (error) {
+        showMsg('msgSignIn', friendlyError(error.message), 'error');
+      } else {
+        showMsg('msgSignIn', 'Signed in! Redirecting…', 'success');
+        setTimeout(function() { window.location.href = 'index.html'; }, 800);
+      }
+    }
+
+    /* ── sign up ── */
+    async function handleSignUp(e) {
+      e.preventDefault();
+      clearMsg('msgSignUp');
+      var name    = document.getElementById('suName').value.trim();
+      var email   = document.getElementById('suEmail').value.trim();
+      var pass    = document.getElementById('suPass').value;
+      var confirm = document.getElementById('suConfirm').value;
+
+      if (pass !== confirm) {
+        showMsg('msgSignUp', 'Passwords do not match.', 'error');
+        return;
+      }
+
+      setLoading('btnSignUp', true, 'Create Account');
+      var { data, error } = await sb.auth.signUp({
+        email: email,
+        password: pass,
+        options: { data: { full_name: name } }
+      });
+      setLoading('btnSignUp', false, 'Create Account');
+
+      if (error) {
+        showMsg('msgSignUp', friendlyError(error.message), 'error');
+      } else if (data.user && data.user.identities && data.user.identities.length === 0) {
+        showMsg('msgSignUp', 'An account with this email already exists. Please sign in.', 'error');
+      } else if (data.session) {
+        /* email confirmation disabled — logged in immediately */
+        showMsg('msgSignUp', 'Account created! Redirecting…', 'success');
+        setTimeout(function() { window.location.href = 'index.html'; }, 800);
+      } else {
+        /* email confirmation enabled */
+        showMsg('msgSignUp',
+          'Account created! Please check your email (' + email + ') to confirm your address, then sign in.',
+          'success');
+        setTimeout(function() { switchTab('signin'); }, 3500);
+      }
+    }
+
+    /* ── friendly error messages ── */
+    function friendlyError(msg) {
+      if (!msg) return 'Something went wrong. Please try again.';
+      var m = msg.toLowerCase();
+      if (m.includes('invalid login') || m.includes('invalid credentials'))
+        return 'Incorrect email or password. Please try again.';
+      if (m.includes('email not confirmed'))
+        return 'Please confirm your email address before signing in.';
+      if (m.includes('already registered') || m.includes('user already registered'))
+        return 'An account with this email already exists. Please sign in.';
+      if (m.includes('password should be'))
+        return 'Password must be at least 6 characters long.';
+      if (m.includes('rate limit'))
+        return 'Too many attempts. Please wait a moment and try again.';
+      return msg;
+    }
+  </script>
+</body>
+</html>
