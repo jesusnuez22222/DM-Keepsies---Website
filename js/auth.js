@@ -1,10 +1,12 @@
 /**
  * Shared auth state — include after Supabase CDN on any page.
  * Checks session and updates the navbar login/user area.
+ * Admin link is shown only for the owner account.
  */
 (function () {
-  var SUPABASE_URL = 'https://boxudirhejtzklnpnxfw.supabase.co';
-  var SUPABASE_KEY = 'sb_publishable_j9kJoHJXwKXQcXY-ginFKQ_p5eilcPr';
+  var SUPABASE_URL  = 'https://boxudirhejtzklnpnxfw.supabase.co';
+  var SUPABASE_KEY  = 'sb_publishable_j9kJoHJXwKXQcXY-ginFKQ_p5eilcPr';
+  var ADMIN_EMAIL   = 'jesusnuez22222@gmail.com';
 
   document.addEventListener('DOMContentLoaded', async function () {
     if (typeof supabase === 'undefined') return;
@@ -12,29 +14,33 @@
     var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     window._sb = sb;
 
-    var loginBtn  = document.getElementById('navLoginBtn');
-    var userArea  = document.getElementById('navUserArea');
+    var loginBtn       = document.getElementById('navLoginBtn');
+    var userArea       = document.getElementById('navUserArea');
     var mobileLoginBtn = document.getElementById('mobileLoginBtn');
     var mobileUserArea = document.getElementById('mobileUserArea');
 
     var { data: { user } } = await sb.auth.getUser();
 
     if (user) {
+      var isAdmin = user.email === ADMIN_EMAIL;
       var name = (user.user_metadata && user.user_metadata.full_name)
         ? user.user_metadata.full_name.split(' ')[0]
         : user.email.split('@')[0];
 
-      if (loginBtn)  loginBtn.style.display = 'none';
+      if (loginBtn)       loginBtn.style.display = 'none';
       if (mobileLoginBtn) mobileLoginBtn.style.display = 'none';
 
       if (userArea) {
         userArea.innerHTML =
+          (isAdmin ? '<a href="admin.html" class="btn btn-sm nav-admin-btn">Admin</a>' : '') +
           '<span class="nav-user-greeting">Hi, ' + name + '</span>' +
           '<button class="btn btn-sm nav-logout-btn" id="navLogout">Logout</button>';
         userArea.style.display = 'flex';
       }
+
       if (mobileUserArea) {
         mobileUserArea.innerHTML =
+          (isAdmin ? '<a href="admin.html" class="mobile-admin-btn" onclick="document.getElementById(\'mobileMenu\').classList.remove(\'open\')">Admin Dashboard</a>' : '') +
           '<span class="mobile-greeting">Hi, ' + name + '</span>' +
           '<button class="mobile-logout-btn" id="mobileLogout">Logout</button>';
         mobileUserArea.style.display = 'flex';
@@ -48,9 +54,9 @@
       });
 
     } else {
-      if (loginBtn)  loginBtn.style.display = '';
+      if (loginBtn)       loginBtn.style.display = '';
       if (mobileLoginBtn) mobileLoginBtn.style.display = '';
-      if (userArea)  userArea.style.display = 'none';
+      if (userArea)       userArea.style.display = 'none';
       if (mobileUserArea) mobileUserArea.style.display = 'none';
     }
   });
