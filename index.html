@@ -1520,5 +1520,424 @@
     );
     revealEls.forEach(el => observer.observe(el));
   </script>
+
+  <!-- ─────────────── BUILD YOUR SOUVENIR GAME ─────────────── -->
+  <style>
+    /* OVERLAY */
+    .bys-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(44, 32, 34, 0.72);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 16px;
+      animation: bys-fadein .35s ease;
+    }
+    .bys-overlay.hidden { display: none; }
+
+    @keyframes bys-fadein {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* MODAL */
+    .bys-modal {
+      background: var(--white);
+      border-radius: 24px;
+      width: 100%; max-width: 520px;
+      max-height: 92vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 24px 80px rgba(196,82,107,.28);
+      animation: bys-slidein .38s cubic-bezier(.22,.88,.44,1);
+    }
+    @keyframes bys-slidein {
+      from { transform: translateY(32px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    .bys-close {
+      position: absolute; top: 16px; right: 18px;
+      background: none; border: none; cursor: pointer;
+      font-size: 1.5rem; color: var(--gray-mid);
+      line-height: 1; padding: 4px 8px;
+      border-radius: 50%;
+      transition: background .2s, color .2s;
+      z-index: 10;
+    }
+    .bys-close:hover { background: var(--blush); color: var(--rose); }
+
+    /* SCREENS */
+    .bys-screen { display: none; padding: 36px 32px 32px; }
+    .bys-screen.active { display: block; }
+
+    /* HEADER STRIP */
+    .bys-header {
+      background: linear-gradient(135deg, var(--rose) 0%, var(--rose-mid) 100%);
+      border-radius: 24px 24px 0 0;
+      padding: 28px 32px 20px;
+      text-align: center;
+    }
+    .bys-eyebrow {
+      font-family: 'Dancing Script', cursive;
+      color: rgba(255,255,255,.85);
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+    }
+    .bys-title {
+      font-size: 1.55rem; font-weight: 700;
+      color: var(--white); letter-spacing: -.3px;
+      margin-bottom: 0;
+    }
+
+    /* ORDER CARD */
+    .bys-order-card {
+      background: var(--blush);
+      border: 2px dashed var(--pink-soft);
+      border-radius: 16px;
+      padding: 20px 22px;
+      margin: 20px 0 18px;
+      font-size: .9rem; line-height: 1.7;
+      color: var(--dark);
+    }
+    .bys-order-card strong { color: var(--rose); }
+    .bys-order-label {
+      font-size: .72rem; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--rose);
+      margin-bottom: 8px; display: block;
+    }
+
+    /* RULE TAG */
+    .bys-rule {
+      background: var(--gray-light);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: .82rem; color: var(--gray-text);
+      text-align: center; margin-bottom: 22px;
+      line-height: 1.5;
+    }
+    .bys-rule strong { color: var(--rose-deep); }
+
+    /* START BUTTON */
+    .bys-btn-primary {
+      display: block; width: 100%;
+      background: linear-gradient(135deg, var(--rose), var(--rose-mid));
+      color: var(--white); border: none;
+      border-radius: 50px; padding: 15px 24px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: .95rem; font-weight: 700;
+      cursor: pointer; letter-spacing: .5px;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 6px 24px rgba(196,82,107,.3);
+    }
+    .bys-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(196,82,107,.4); }
+
+    .bys-btn-ghost {
+      display: block; width: 100%;
+      background: none; border: 2px solid var(--pink-soft);
+      color: var(--gray-text); border-radius: 50px;
+      padding: 12px 24px; margin-top: 12px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: .88rem; font-weight: 600;
+      cursor: pointer; transition: border-color .2s, color .2s;
+    }
+    .bys-btn-ghost:hover { border-color: var(--rose); color: var(--rose); }
+
+    /* PROGRESS BAR */
+    .bys-progress-wrap {
+      margin-bottom: 22px;
+    }
+    .bys-progress-meta {
+      display: flex; justify-content: space-between;
+      font-size: .78rem; color: var(--gray-text);
+      margin-bottom: 8px; font-weight: 600;
+    }
+    .bys-progress-bar {
+      height: 6px; background: var(--blush);
+      border-radius: 99px; overflow: hidden;
+    }
+    .bys-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--rose), var(--pink-soft));
+      border-radius: 99px;
+      transition: width .4s ease;
+    }
+
+    /* QUESTION */
+    .bys-question {
+      font-size: 1.05rem; font-weight: 700;
+      color: var(--dark); margin-bottom: 18px;
+      line-height: 1.4;
+    }
+
+    /* ORDER REMINDER (small) */
+    .bys-reminder {
+      background: var(--blush-lite);
+      border-left: 3px solid var(--pink-soft);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: .8rem; color: var(--gray-text);
+      margin-bottom: 18px; line-height: 1.55;
+    }
+    .bys-reminder strong { color: var(--rose); }
+
+    /* OPTIONS GRID */
+    .bys-options {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 10px; margin-bottom: 8px;
+    }
+    .bys-option {
+      background: var(--white);
+      border: 2px solid var(--blush);
+      border-radius: 12px;
+      padding: 14px 10px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: .88rem; font-weight: 600;
+      color: var(--dark); cursor: pointer;
+      text-align: center;
+      transition: border-color .2s, background .2s, transform .15s;
+    }
+    .bys-option:hover {
+      border-color: var(--rose); background: var(--blush);
+      transform: translateY(-2px);
+    }
+    .bys-option.correct {
+      border-color: #2ecc71; background: #eafaf1; color: #1a7a3f;
+    }
+    .bys-option.wrong {
+      border-color: #e74c3c; background: #fdf0ef; color: #c0392b;
+    }
+    .bys-option:disabled { cursor: not-allowed; }
+
+    /* RESULT SCREENS */
+    .bys-result {
+      text-align: center; padding: 40px 32px;
+    }
+    .bys-result-icon {
+      font-size: 3.5rem; margin-bottom: 16px;
+    }
+    .bys-result-title {
+      font-size: 1.45rem; font-weight: 700;
+      color: var(--dark); margin-bottom: 10px;
+    }
+    .bys-result-sub {
+      font-size: .9rem; color: var(--gray-text);
+      line-height: 1.6; margin-bottom: 24px;
+    }
+
+    /* DISCOUNT CODE BOX */
+    .bys-code-box {
+      background: linear-gradient(135deg, var(--rose), var(--rose-mid));
+      border-radius: 16px; padding: 20px 24px;
+      margin: 0 0 24px;
+    }
+    .bys-code-label {
+      font-size: .75rem; letter-spacing: 1.5px; text-transform: uppercase;
+      color: rgba(255,255,255,.8); font-weight: 600; margin-bottom: 6px;
+    }
+    .bys-code-value {
+      font-size: 2rem; font-weight: 800; letter-spacing: 4px;
+      color: var(--white); font-family: 'Montserrat', sans-serif;
+    }
+    .bys-code-note {
+      font-size: .78rem; color: rgba(255,255,255,.75);
+      margin-top: 6px;
+    }
+
+    @media (max-width: 480px) {
+      .bys-screen { padding: 28px 20px 24px; }
+      .bys-header { padding: 22px 20px 16px; }
+      .bys-title { font-size: 1.3rem; }
+      .bys-options { grid-template-columns: 1fr; }
+      .bys-result { padding: 32px 20px; }
+      .bys-code-value { font-size: 1.6rem; letter-spacing: 3px; }
+    }
+  </style>
+
+  <div id="bysOverlay" class="bys-overlay hidden">
+    <div class="bys-modal" role="dialog" aria-modal="true" aria-label="Build Your Souvenir Game">
+
+      <button class="bys-close" id="bysClose" title="Close and go to website">&times;</button>
+
+      <!-- ── INTRO SCREEN ── -->
+      <div id="bysIntro" class="bys-screen active">
+        <div class="bys-header">
+          <p class="bys-eyebrow">A little game for you</p>
+          <h2 class="bys-title">Build Your Souvenir</h2>
+        </div>
+        <div style="padding: 0 4px;">
+          <div class="bys-order-card" style="margin-top: 24px;">
+            <span class="bys-order-label">Tonight's Order</span>
+            A couple is planning their <strong>Wedding</strong> celebration in Davao. They want their guests to take home something <strong>Elegant</strong> as a keepsake. They've chosen a <strong>Blush Pink &amp; White</strong> color theme, and they'd like each souvenir finished with a <strong>Personalized Ribbon</strong>.
+          </div>
+          <div class="bys-rule">
+            Read the order carefully, then answer <strong>4 questions</strong> correctly to unlock <strong>10% off</strong> your order. One wrong answer and the discount is gone!
+          </div>
+          <button class="bys-btn-primary" id="bysStart">Play &amp; Earn 10% Off</button>
+          <button class="bys-btn-ghost" id="bysSkip">No thanks, go to website</button>
+        </div>
+      </div>
+
+      <!-- ── STEP SCREEN ── -->
+      <div id="bysStep" class="bys-screen">
+        <div class="bys-progress-wrap">
+          <div class="bys-progress-meta">
+            <span id="bysStepLabel">Step 1 of 4</span>
+            <span id="bysStepScore">0 correct</span>
+          </div>
+          <div class="bys-progress-bar">
+            <div class="bys-progress-fill" id="bysProgressFill" style="width:0%"></div>
+          </div>
+        </div>
+        <div class="bys-reminder">
+          Reminder: <strong>Wedding</strong> &middot; <strong>Elegant</strong> &middot; <strong>Blush Pink &amp; White</strong> &middot; <strong>Personalized Ribbon</strong>
+        </div>
+        <p class="bys-question" id="bysQuestion"></p>
+        <div class="bys-options" id="bysOptions"></div>
+      </div>
+
+      <!-- ── FAIL SCREEN ── -->
+      <div id="bysFail" class="bys-screen">
+        <div class="bys-result">
+          <div class="bys-result-icon">&#128532;</div>
+          <h3 class="bys-result-title">Wrong Choice!</h3>
+          <p class="bys-result-sub">
+            One mistake means no discount this time — but don't worry, our keepsakes are always worth it! Feel free to reach out anytime.
+          </p>
+          <button class="bys-btn-primary" id="bysRetry">Try Again</button>
+          <button class="bys-btn-ghost" id="bysExitFail">Continue to Website</button>
+        </div>
+      </div>
+
+      <!-- ── SUCCESS SCREEN ── -->
+      <div id="bysSuccess" class="bys-screen">
+        <div class="bys-result">
+          <div class="bys-result-icon">&#127881;</div>
+          <h3 class="bys-result-title">Perfect Order!</h3>
+          <p class="bys-result-sub">You matched all 4 steps correctly! Here's your exclusive discount — mention this code when you message us.</p>
+          <div class="bys-code-box">
+            <p class="bys-code-label">Your Discount Code</p>
+            <p class="bys-code-value">KEEPSIES10</p>
+            <p class="bys-code-note">10% off your order &bull; mention this when you contact us</p>
+          </div>
+          <button class="bys-btn-primary" id="bysExitSuccess">Shop Now</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var STEPS = [
+        {
+          question: "What occasion is this order for?",
+          options: ["Wedding", "Birthday", "Baptism", "Anniversary"],
+          correct: "Wedding"
+        },
+        {
+          question: "What style does the couple want?",
+          options: ["Playful", "Elegant", "Rustic", "Minimalist"],
+          correct: "Elegant"
+        },
+        {
+          question: "What color theme did they choose?",
+          options: ["Blue & Silver", "Red & Gold", "Blush Pink & White", "Purple & Ivory"],
+          correct: "Blush Pink & White"
+        },
+        {
+          question: "How should each souvenir be finished?",
+          options: ["Wax Seal", "Engraved Tag", "Dried Flower", "Personalized Ribbon"],
+          correct: "Personalized Ribbon"
+        }
+      ];
+
+      var currentStep = 0;
+      var correctCount = 0;
+
+      var overlay  = document.getElementById('bysOverlay');
+      var intro    = document.getElementById('bysIntro');
+      var stepEl   = document.getElementById('bysStep');
+      var failEl   = document.getElementById('bysFail');
+      var successEl= document.getElementById('bysSuccess');
+
+      function showScreen(el) {
+        [intro, stepEl, failEl, successEl].forEach(function(s){ s.classList.remove('active'); });
+        el.classList.add('active');
+      }
+
+      function openGame() {
+        overlay.classList.remove('hidden');
+        showScreen(intro);
+      }
+
+      function closeGame() {
+        overlay.classList.add('hidden');
+        sessionStorage.setItem('bys_played', '1');
+      }
+
+      function startGame() {
+        currentStep  = 0;
+        correctCount = 0;
+        renderStep();
+        showScreen(stepEl);
+      }
+
+      function renderStep() {
+        var data = STEPS[currentStep];
+        document.getElementById('bysStepLabel').textContent = 'Step ' + (currentStep + 1) + ' of ' + STEPS.length;
+        document.getElementById('bysStepScore').textContent = correctCount + ' correct';
+        document.getElementById('bysProgressFill').style.width = (currentStep / STEPS.length * 100) + '%';
+        document.getElementById('bysQuestion').textContent = data.question;
+
+        var optionsEl = document.getElementById('bysOptions');
+        optionsEl.innerHTML = '';
+        data.options.forEach(function(opt) {
+          var btn = document.createElement('button');
+          btn.className = 'bys-option';
+          btn.textContent = opt;
+          btn.addEventListener('click', function() { handleAnswer(opt, btn); });
+          optionsEl.appendChild(btn);
+        });
+      }
+
+      function handleAnswer(chosen, btn) {
+        var data = STEPS[currentStep];
+        var allBtns = document.querySelectorAll('.bys-option');
+        allBtns.forEach(function(b){ b.disabled = true; });
+
+        if (chosen === data.correct) {
+          btn.classList.add('correct');
+          correctCount++;
+          setTimeout(function() {
+            currentStep++;
+            if (currentStep >= STEPS.length) {
+              sessionStorage.setItem('bys_played', '1');
+              document.getElementById('bysProgressFill').style.width = '100%';
+              setTimeout(function(){ showScreen(successEl); }, 300);
+            } else {
+              renderStep();
+            }
+          }, 500);
+        } else {
+          btn.classList.add('wrong');
+          allBtns.forEach(function(b){
+            if (b.textContent === data.correct) b.classList.add('correct');
+          });
+          setTimeout(function(){ showScreen(failEl); }, 700);
+        }
+      }
+
+      document.getElementById('bysClose').addEventListener('click', closeGame);
+      document.getElementById('bysSkip').addEventListener('click', closeGame);
+      document.getElementById('bysStart').addEventListener('click', startGame);
+      document.getElementById('bysRetry').addEventListener('click', startGame);
+      document.getElementById('bysExitFail').addEventListener('click', closeGame);
+      document.getElementById('bysExitSuccess').addEventListener('click', closeGame);
+
+      if (!sessionStorage.getItem('bys_played')) {
+        setTimeout(openGame, 800);
+      }
+    })();
+  </script>
 </body>
 </html>
