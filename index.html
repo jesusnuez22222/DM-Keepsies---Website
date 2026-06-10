@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -1522,422 +1522,315 @@
   </script>
 
   <!-- ─────────────── BUILD YOUR SOUVENIR GAME ─────────────── -->
+
+  <canvas id="bysConfetti" style="position:fixed;inset:0;z-index:10000;pointer-events:none;display:none;"></canvas>
+
   <style>
-    /* OVERLAY */
-    .bys-overlay {
-      position: fixed; inset: 0; z-index: 9999;
-      background: rgba(44, 32, 34, 0.72);
-      backdrop-filter: blur(4px);
-      display: flex; align-items: center; justify-content: center;
-      padding: 16px;
-      animation: bys-fadein .35s ease;
-    }
-    .bys-overlay.hidden { display: none; }
+    /* ── OVERLAY ── */
+    .bys-overlay{position:fixed;inset:0;z-index:9999;background:rgba(10,4,8,.93);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:16px;animation:bys-fade-in .4s ease;overflow:hidden}
+    .bys-overlay.hidden{display:none}
+    @keyframes bys-fade-in{from{opacity:0}to{opacity:1}}
 
-    @keyframes bys-fadein {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
+    /* ── PARTICLES ── */
+    .bys-particle{position:absolute;border-radius:50%;pointer-events:none;width:var(--sz,4px);height:var(--sz,4px);bottom:-8px;left:var(--x,50%);background:radial-gradient(circle,#fff9e6,#D4A853 55%,transparent);box-shadow:0 0 6px 2px rgba(212,168,83,.35);opacity:0;animation:bys-float var(--dur,7s) var(--del,0s) infinite ease-in}
+    @keyframes bys-float{0%{transform:translateY(0) scale(.3) rotate(0deg);opacity:0}8%{opacity:.9}70%{opacity:.45}100%{transform:translateY(-105vh) scale(1.3) rotate(200deg);opacity:0}}
 
-    /* MODAL */
-    .bys-modal {
-      background: var(--white);
-      border-radius: 24px;
-      width: 100%; max-width: 520px;
-      max-height: 92vh;
-      overflow-y: auto;
-      position: relative;
-      box-shadow: 0 24px 80px rgba(196,82,107,.28);
-      animation: bys-slidein .38s cubic-bezier(.22,.88,.44,1);
-    }
-    @keyframes bys-slidein {
-      from { transform: translateY(32px); opacity: 0; }
-      to   { transform: translateY(0);    opacity: 1; }
-    }
+    /* ── MODAL ── */
+    .bys-modal{background:#FFFAF8;border-radius:28px;width:100%;max-width:510px;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 40px 100px rgba(0,0,0,.6),0 0 0 1px rgba(212,168,83,.12),inset 0 1px 0 rgba(255,255,255,.7);animation:bys-modal-in .42s cubic-bezier(.22,.9,.4,1.05)}
+    @keyframes bys-modal-in{from{transform:translateY(32px) scale(.96);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
 
-    .bys-close {
-      position: absolute; top: 16px; right: 18px;
-      background: none; border: none; cursor: pointer;
-      font-size: 1.5rem; color: var(--gray-mid);
-      line-height: 1; padding: 4px 8px;
-      border-radius: 50%;
-      transition: background .2s, color .2s;
-      z-index: 10;
-    }
-    .bys-close:hover { background: var(--blush); color: var(--rose); }
+    /* ── CLOSE ── */
+    .bys-close{position:absolute;top:14px;right:16px;z-index:20;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.28);color:#fff;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .15s}
+    .bys-close:hover{background:rgba(255,255,255,.3);transform:scale(1.1)}
 
-    /* SCREENS */
-    .bys-screen { display: none; padding: 36px 32px 32px; }
-    .bys-screen.active { display: block; }
+    /* ── SCREENS ── */
+    .bys-screen{display:none}
+    .bys-screen.active{display:block;animation:bys-screen-in .32s ease}
+    @keyframes bys-screen-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 
-    /* HEADER STRIP */
-    .bys-header {
-      background: linear-gradient(135deg, var(--rose) 0%, var(--rose-mid) 100%);
-      border-radius: 24px 24px 0 0;
-      padding: 28px 32px 20px;
-      text-align: center;
-    }
-    .bys-eyebrow {
-      font-family: 'Dancing Script', cursive;
-      color: rgba(255,255,255,.85);
-      font-size: 1.1rem;
-      margin-bottom: 4px;
-    }
-    .bys-title {
-      font-size: 1.55rem; font-weight: 700;
-      color: var(--white); letter-spacing: -.3px;
-      margin-bottom: 0;
-    }
+    /* ── HEADER ── */
+    .bys-header{background:linear-gradient(150deg,#4A1030 0%,#8B2252 36%,#C4526B 70%,#D4708A 100%);border-radius:28px 28px 0 0;padding:30px 30px 22px;text-align:center;position:relative;overflow:hidden}
+    .bys-header::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% -20%,rgba(255,200,120,.18) 0%,transparent 65%)}
+    .bys-header--compact{padding:18px 24px 14px;border-radius:28px 28px 0 0}
+    .bys-header--fail{background:linear-gradient(150deg,#3D1018 0%,#78202C 38%,#C03040 100%)}
+    .bys-header--success{background:linear-gradient(150deg,#2E1800 0%,#7A4500 38%,#D4A030 100%)}
+    .bys-header--cooldown{background:linear-gradient(150deg,#1A1040 0%,#4C2880 40%,#8B50C0 100%)}
+    .bys-eyebrow{font-family:'Dancing Script',cursive;font-size:1.05rem;color:rgba(255,255,255,.72);margin-bottom:4px}
+    .bys-title{font-size:1.65rem;font-weight:800;letter-spacing:-.4px;display:inline-block;background:linear-gradient(90deg,#fff5dc,#ffd97d,#fff,#ffd97d,#fff5dc);background-size:260% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:bys-shimmer-title 4s linear infinite}
+    @keyframes bys-shimmer-title{0%{background-position:0% center}100%{background-position:260% center}}
+    .bys-header-sub{color:rgba(255,255,255,.58);font-size:.82rem;margin-top:5px}
 
-    /* ORDER CARD */
-    .bys-order-card {
-      background: var(--blush);
-      border: 2px dashed var(--pink-soft);
-      border-radius: 16px;
-      padding: 20px 22px;
-      margin: 20px 0 18px;
-      font-size: .9rem; line-height: 1.7;
-      color: var(--dark);
-    }
-    .bys-order-card strong { color: var(--rose); }
-    .bys-order-label {
-      font-size: .72rem; font-weight: 700; letter-spacing: 1.5px;
-      text-transform: uppercase; color: var(--rose);
-      margin-bottom: 8px; display: block;
-    }
+    /* ── BODY ── */
+    .bys-body{padding:22px 26px 26px}
 
-    /* RULE TAG */
-    .bys-rule {
-      background: var(--gray-light);
-      border-radius: 10px;
-      padding: 12px 16px;
-      font-size: .82rem; color: var(--gray-text);
-      text-align: center; margin-bottom: 22px;
-      line-height: 1.5;
-    }
-    .bys-rule strong { color: var(--rose-deep); }
+    /* ── ORDER CARD ── */
+    .bys-order-card{background:#FEF8EC;border:1.5px solid #E5CF9C;border-radius:18px;padding:18px 20px;margin-bottom:16px;position:relative;overflow:hidden;box-shadow:0 2px 18px rgba(212,168,83,.09)}
+    .bys-order-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#C4526B,#D4A853,#C4526B)}
+    .bys-order-label{display:block;font-size:.69rem;font-weight:700;letter-spacing:1.9px;text-transform:uppercase;color:#B58428;margin-bottom:10px}
+    .bys-order-card p{font-size:.87rem;line-height:1.74;color:#3D2E28}
+    .bys-order-card strong{color:#C4526B;font-weight:700}
 
-    /* START BUTTON */
-    .bys-btn-primary {
-      display: block; width: 100%;
-      background: linear-gradient(135deg, var(--rose), var(--rose-mid));
-      color: var(--white); border: none;
-      border-radius: 50px; padding: 15px 24px;
-      font-family: 'Montserrat', sans-serif;
-      font-size: .95rem; font-weight: 700;
-      cursor: pointer; letter-spacing: .5px;
-      transition: transform .2s, box-shadow .2s;
-      box-shadow: 0 6px 24px rgba(196,82,107,.3);
-    }
-    .bys-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(196,82,107,.4); }
+    /* ── RULE ── */
+    .bys-rule{background:linear-gradient(135deg,rgba(196,82,107,.04),rgba(212,168,83,.04));border:1px solid rgba(196,82,107,.14);border-radius:12px;padding:12px 16px;margin-bottom:20px;font-size:.81rem;color:#6B5A60;text-align:center;line-height:1.58}
+    .bys-rule strong{color:#8B2252}
 
-    .bys-btn-ghost {
-      display: block; width: 100%;
-      background: none; border: 2px solid var(--pink-soft);
-      color: var(--gray-text); border-radius: 50px;
-      padding: 12px 24px; margin-top: 12px;
-      font-family: 'Montserrat', sans-serif;
-      font-size: .88rem; font-weight: 600;
-      cursor: pointer; transition: border-color .2s, color .2s;
-    }
-    .bys-btn-ghost:hover { border-color: var(--rose); color: var(--rose); }
+    /* ── BUTTONS ── */
+    .bys-btn-primary{display:block;width:100%;background:linear-gradient(135deg,#7A1A48 0%,#C4526B 55%,#D4708A 100%);color:#fff;border:none;border-radius:50px;padding:16px 24px;font-family:'Montserrat',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;letter-spacing:.5px;box-shadow:0 6px 30px rgba(122,26,72,.38),0 2px 8px rgba(0,0,0,.14);transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden}
+    .bys-btn-primary::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent);transform:translateX(-100%);transition:transform .55s ease}
+    .bys-btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 40px rgba(122,26,72,.48)}
+    .bys-btn-primary:hover::after{transform:translateX(100%)}
+    .bys-btn-ghost{display:block;width:100%;background:transparent;border:1.5px solid rgba(196,82,107,.22);border-radius:50px;color:#8B5A65;padding:13px 24px;margin-top:10px;font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:border-color .2s,color .2s,background .2s}
+    .bys-btn-ghost:hover{border-color:#C4526B;color:#C4526B;background:rgba(196,82,107,.05)}
 
-    /* PROGRESS BAR */
-    .bys-progress-wrap {
-      margin-bottom: 22px;
-    }
-    .bys-progress-meta {
-      display: flex; justify-content: space-between;
-      font-size: .78rem; color: var(--gray-text);
-      margin-bottom: 8px; font-weight: 600;
-    }
-    .bys-progress-bar {
-      height: 6px; background: var(--blush);
-      border-radius: 99px; overflow: hidden;
-    }
-    .bys-progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--rose), var(--pink-soft));
-      border-radius: 99px;
-      transition: width .4s ease;
-    }
+    /* ── PROGRESS DOTS ── */
+    .bys-dots{display:flex;align-items:center;justify-content:center;gap:0;padding:2px 0}
+    .bys-dot{width:34px;height:34px;border-radius:50%;flex-shrink:0;border:2.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;color:rgba(255,255,255,.45);transition:all .35s ease}
+    .bys-dot.active{border-color:#fff;background:rgba(255,255,255,.22);color:#fff;animation:bys-dot-pulse 1.9s ease infinite}
+    .bys-dot.done{border-color:rgba(255,255,255,.75);background:rgba(255,255,255,.88);color:#1E8A4E;font-weight:900}
+    .bys-dot-line{flex:1;height:2px;max-width:48px;background:rgba(255,255,255,.18);transition:background .35s}
+    .bys-dot-line.done{background:rgba(255,255,255,.72)}
+    @keyframes bys-dot-pulse{0%,100%{box-shadow:0 0 0 4px rgba(255,255,255,.1)}50%{box-shadow:0 0 0 9px rgba(255,255,255,.03)}}
 
-    /* QUESTION */
-    .bys-question {
-      font-size: 1.05rem; font-weight: 700;
-      color: var(--dark); margin-bottom: 18px;
-      line-height: 1.4;
-    }
+    /* ── REMINDER ── */
+    .bys-reminder{background:#FEF8EC;border:1px solid #E5CF9C;border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:.79rem;color:#6B5A60;line-height:1.52}
+    .bys-reminder strong{color:#C4526B;font-weight:700}
 
-    /* ORDER REMINDER (small) */
-    .bys-reminder {
-      background: var(--blush-lite);
-      border-left: 3px solid var(--pink-soft);
-      border-radius: 8px;
-      padding: 10px 14px;
-      font-size: .8rem; color: var(--gray-text);
-      margin-bottom: 18px; line-height: 1.55;
-    }
-    .bys-reminder strong { color: var(--rose); }
+    /* ── QUESTION ── */
+    .bys-question{font-size:1.06rem;font-weight:700;color:#2C2022;margin-bottom:16px;line-height:1.4}
 
-    /* OPTIONS GRID */
-    .bys-options {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 10px; margin-bottom: 8px;
-    }
-    .bys-option {
-      background: var(--white);
-      border: 2px solid var(--blush);
-      border-radius: 12px;
-      padding: 14px 10px;
-      font-family: 'Montserrat', sans-serif;
-      font-size: .88rem; font-weight: 600;
-      color: var(--dark); cursor: pointer;
-      text-align: center;
-      transition: border-color .2s, background .2s, transform .15s;
-    }
-    .bys-option:hover {
-      border-color: var(--rose); background: var(--blush);
-      transform: translateY(-2px);
-    }
-    .bys-option.correct {
-      border-color: #2ecc71; background: #eafaf1; color: #1a7a3f;
-    }
-    .bys-option.wrong {
-      border-color: #e74c3c; background: #fdf0ef; color: #c0392b;
-    }
-    .bys-option:disabled { cursor: not-allowed; }
+    /* ── OPTIONS ── */
+    .bys-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .bys-option{background:#fff;border:2px solid #EEE0E4;border-radius:14px;padding:15px 10px;font-family:'Montserrat',sans-serif;font-size:.86rem;font-weight:600;color:#2C2022;cursor:pointer;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.04);transition:border-color .2s,background .2s,transform .18s,box-shadow .2s;position:relative;overflow:hidden}
+    .bys-option:hover{border-color:#C4526B;background:#FFF4F6;transform:translateY(-3px);box-shadow:0 6px 22px rgba(196,82,107,.15)}
+    .bys-option.correct{border-color:#1E8A4E;background:#E6F7EE;color:#145C33;box-shadow:0 0 0 3px rgba(30,138,78,.12),0 4px 18px rgba(30,138,78,.18);animation:bys-correct-pop .35s ease}
+    .bys-option.wrong{border-color:#D42030;background:#FEF0F1;color:#A01020;animation:bys-shake .45s ease}
+    .bys-option:disabled{cursor:not-allowed}
+    @keyframes bys-correct-pop{0%{transform:scale(.94)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
+    @keyframes bys-shake{0%,100%{transform:translateX(0)}15%,45%,75%{transform:translateX(-7px)}30%,60%,90%{transform:translateX(7px)}}
 
-    /* RESULT SCREENS */
-    .bys-result {
-      text-align: center; padding: 40px 32px;
-    }
-    .bys-result-icon {
-      font-size: 3.5rem; margin-bottom: 16px;
-    }
-    .bys-result-title {
-      font-size: 1.45rem; font-weight: 700;
-      color: var(--dark); margin-bottom: 10px;
-    }
-    .bys-result-sub {
-      font-size: .9rem; color: var(--gray-text);
-      line-height: 1.6; margin-bottom: 24px;
-    }
+    /* ── RESULTS ── */
+    .bys-result{text-align:center;padding:6px 0 18px}
+    .bys-result-icon{font-size:3.2rem;margin-bottom:12px;display:block}
+    .bys-result-title{font-size:1.22rem;font-weight:800;color:#2C2022;margin-bottom:8px}
+    .bys-result-sub{font-size:.86rem;color:#8B7480;line-height:1.65;max-width:330px;margin:0 auto 4px}
+    .bys-cooldown-body{text-align:center;padding:12px 0 20px}
 
-    /* DISCOUNT CODE BOX */
-    .bys-code-box {
-      background: linear-gradient(135deg, var(--rose), var(--rose-mid));
-      border-radius: 16px; padding: 20px 24px;
-      margin: 0 0 24px;
-    }
-    .bys-code-label {
-      font-size: .75rem; letter-spacing: 1.5px; text-transform: uppercase;
-      color: rgba(255,255,255,.8); font-weight: 600; margin-bottom: 6px;
-    }
-    .bys-code-value {
-      font-size: 2rem; font-weight: 800; letter-spacing: 4px;
-      color: var(--white); font-family: 'Montserrat', sans-serif;
-    }
-    .bys-code-note {
-      font-size: .78rem; color: rgba(255,255,255,.75);
-      margin-top: 6px;
-    }
+    /* ── DISCOUNT CODE ── */
+    .bys-code-box{border-radius:20px;padding:20px 22px;margin:4px 0 20px;position:relative;overflow:hidden;background:linear-gradient(140deg,#360E20 0%,#7A1A48 38%,#C4526B 72%,#A06020 100%);box-shadow:0 8px 44px rgba(122,26,72,.42),0 0 0 1px rgba(212,168,83,.18);animation:bys-code-glow 2.6s ease infinite}
+    .bys-code-box::before{content:'';position:absolute;top:-40%;left:-55%;width:36%;height:180%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.13),transparent);transform:rotate(18deg);animation:bys-code-sweep 2.6s 1.2s ease-in-out infinite}
+    @keyframes bys-code-glow{0%,100%{box-shadow:0 8px 44px rgba(122,26,72,.42),0 0 0 1px rgba(212,168,83,.18)}50%{box-shadow:0 14px 64px rgba(212,168,83,.42),0 0 0 1px rgba(212,168,83,.38),0 0 44px rgba(212,168,83,.08)}}
+    @keyframes bys-code-sweep{0%{left:-55%}65%,100%{left:115%}}
+    .bys-code-label{font-size:.69rem;font-weight:700;letter-spacing:1.9px;text-transform:uppercase;color:rgba(255,218,130,.78);margin-bottom:6px}
+    .bys-code-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:6px}
+    .bys-code-value{font-size:2rem;font-weight:900;letter-spacing:4px;color:#fff;font-family:'Montserrat',sans-serif;text-shadow:0 2px 14px rgba(0,0,0,.28)}
+    .bys-copy-btn{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);color:#fff;border-radius:8px;padding:5px 12px;font-family:'Montserrat',sans-serif;font-size:.74rem;font-weight:700;cursor:pointer;transition:background .2s;white-space:nowrap}
+    .bys-copy-btn:hover{background:rgba(255,255,255,.28)}
+    .bys-code-note{font-size:.75rem;color:rgba(255,218,130,.62);text-align:center}
 
-    @media (max-width: 480px) {
-      .bys-screen { padding: 28px 20px 24px; }
-      .bys-header { padding: 22px 20px 16px; }
-      .bys-title { font-size: 1.3rem; }
-      .bys-options { grid-template-columns: 1fr; }
-      .bys-result { padding: 32px 20px; }
-      .bys-code-value { font-size: 1.6rem; letter-spacing: 3px; }
+    /* ── RESPONSIVE ── */
+    @media(max-width:480px){
+      .bys-modal{border-radius:22px}
+      .bys-header,.bys-header--compact{border-radius:22px 22px 0 0;padding:22px 18px 16px}
+      .bys-title{font-size:1.35rem}
+      .bys-body{padding:18px 16px 20px}
+      .bys-options{grid-template-columns:1fr}
+      .bys-dot{width:28px;height:28px;font-size:.7rem}
+      .bys-dot-line{max-width:28px}
+      .bys-code-value{font-size:1.6rem;letter-spacing:3px}
     }
   </style>
 
   <div id="bysOverlay" class="bys-overlay hidden">
-    <div class="bys-modal" role="dialog" aria-modal="true" aria-label="Build Your Souvenir Game">
+    <span class="bys-particle" style="--x:7%;--dur:8s;--del:0s;--sz:3px"></span>
+    <span class="bys-particle" style="--x:18%;--dur:6s;--del:1.3s;--sz:4px"></span>
+    <span class="bys-particle" style="--x:29%;--dur:9.5s;--del:.5s;--sz:3px"></span>
+    <span class="bys-particle" style="--x:41%;--dur:7s;--del:2.2s;--sz:5px"></span>
+    <span class="bys-particle" style="--x:55%;--dur:6.5s;--del:.9s;--sz:3px"></span>
+    <span class="bys-particle" style="--x:66%;--dur:10s;--del:1.8s;--sz:4px"></span>
+    <span class="bys-particle" style="--x:76%;--dur:7.5s;--del:3.2s;--sz:3px"></span>
+    <span class="bys-particle" style="--x:86%;--dur:8s;--del:.3s;--sz:5px"></span>
+    <span class="bys-particle" style="--x:93%;--dur:6s;--del:2.6s;--sz:3px"></span>
+    <span class="bys-particle" style="--x:23%;--dur:11s;--del:4.1s;--sz:2px"></span>
 
-      <button class="bys-close" id="bysClose" title="Close and go to website">&times;</button>
+    <div class="bys-modal" role="dialog" aria-modal="true" aria-label="Build Your Souvenir">
+      <button class="bys-close" id="bysClose" title="Close">&times;</button>
 
-      <!-- ── INTRO SCREEN ── -->
+      <!-- INTRO -->
       <div id="bysIntro" class="bys-screen active">
         <div class="bys-header">
           <p class="bys-eyebrow">A little game for you</p>
           <h2 class="bys-title">Build Your Souvenir</h2>
+          <p class="bys-header-sub">Match the perfect order &mdash; earn a reward</p>
         </div>
-        <div style="padding: 0 4px;">
-          <div class="bys-order-card" style="margin-top: 24px;">
-            <span class="bys-order-label">Tonight's Order</span>
-            A couple is planning their <strong>Wedding</strong> celebration in Davao. They want their guests to take home something <strong>Elegant</strong> as a keepsake. They've chosen a <strong>Blush Pink &amp; White</strong> color theme, and they'd like each souvenir finished with a <strong>Personalized Ribbon</strong>.
+        <div class="bys-body">
+          <div class="bys-order-card">
+            <span class="bys-order-label" id="bysOrderLabel">Loading order&hellip;</span>
+            <p id="bysOrderText"></p>
           </div>
           <div class="bys-rule">
-            Read the order carefully, then answer <strong>4 questions</strong> correctly to unlock <strong>10% off</strong> your order. One wrong answer and the discount is gone!
+            Answer <strong>4 questions</strong> correctly to unlock <strong>10% off</strong> &mdash; one mistake ends the game!
           </div>
           <button class="bys-btn-primary" id="bysStart">Play &amp; Earn 10% Off</button>
           <button class="bys-btn-ghost" id="bysSkip">No thanks, go to website</button>
         </div>
       </div>
 
-      <!-- ── STEP SCREEN ── -->
+      <!-- COOLDOWN -->
+      <div id="bysCooldown" class="bys-screen">
+        <div class="bys-header bys-header--cooldown">
+          <p class="bys-eyebrow">See you soon!</p>
+          <h2 class="bys-title" style="font-size:1.4rem">Come Back Soon</h2>
+        </div>
+        <div class="bys-body">
+          <div class="bys-cooldown-body">
+            <span class="bys-result-icon">&#8987;</span>
+            <p class="bys-result-title">You&rsquo;ve already played!</p>
+            <p class="bys-result-sub" id="bysCooldownMsg">A new game and a fresh chance to earn a discount will be waiting for you soon.</p>
+          </div>
+          <button class="bys-btn-primary" id="bysCooldownExit">Continue to Website</button>
+        </div>
+      </div>
+
+      <!-- STEP -->
       <div id="bysStep" class="bys-screen">
-        <div class="bys-progress-wrap">
-          <div class="bys-progress-meta">
-            <span id="bysStepLabel">Step 1 of 4</span>
-            <span id="bysStepScore">0 correct</span>
-          </div>
-          <div class="bys-progress-bar">
-            <div class="bys-progress-fill" id="bysProgressFill" style="width:0%"></div>
+        <div class="bys-header bys-header--compact">
+          <div class="bys-dots" id="bysDots">
+            <div class="bys-dot active" data-n="1"><span>1</span></div>
+            <div class="bys-dot-line"></div>
+            <div class="bys-dot" data-n="2"><span>2</span></div>
+            <div class="bys-dot-line"></div>
+            <div class="bys-dot" data-n="3"><span>3</span></div>
+            <div class="bys-dot-line"></div>
+            <div class="bys-dot" data-n="4"><span>4</span></div>
           </div>
         </div>
-        <div class="bys-reminder">
-          Reminder: <strong>Wedding</strong> &middot; <strong>Elegant</strong> &middot; <strong>Blush Pink &amp; White</strong> &middot; <strong>Personalized Ribbon</strong>
+        <div class="bys-body">
+          <div class="bys-reminder" id="bysReminder"></div>
+          <p class="bys-question" id="bysQuestion"></p>
+          <div class="bys-options" id="bysOptions"></div>
         </div>
-        <p class="bys-question" id="bysQuestion"></p>
-        <div class="bys-options" id="bysOptions"></div>
       </div>
 
-      <!-- ── FAIL SCREEN ── -->
+      <!-- FAIL -->
       <div id="bysFail" class="bys-screen">
-        <div class="bys-result">
-          <div class="bys-result-icon">&#128532;</div>
-          <h3 class="bys-result-title">Wrong Choice!</h3>
-          <p class="bys-result-sub">
-            One mistake means no discount this time — but don't worry, our keepsakes are always worth it! Feel free to reach out anytime.
-          </p>
+        <div class="bys-header bys-header--fail">
+          <p class="bys-eyebrow">Oops!</p>
+          <h2 class="bys-title" style="font-size:1.4rem">Wrong Choice</h2>
+        </div>
+        <div class="bys-body">
+          <div class="bys-result">
+            <span class="bys-result-icon">&#128532;</span>
+            <p class="bys-result-title">No discount this time!</p>
+            <p class="bys-result-sub">One wrong step and the order fell apart &mdash; but our keepsakes are always worth it. Try again or explore our collection!</p>
+          </div>
           <button class="bys-btn-primary" id="bysRetry">Try Again</button>
-          <button class="bys-btn-ghost" id="bysExitFail">Continue to Website</button>
+          <button class="bys-btn-ghost" id="bysExitFail">Browse Products</button>
         </div>
       </div>
 
-      <!-- ── SUCCESS SCREEN ── -->
+      <!-- SUCCESS -->
       <div id="bysSuccess" class="bys-screen">
-        <div class="bys-result">
-          <div class="bys-result-icon">&#127881;</div>
-          <h3 class="bys-result-title">Perfect Order!</h3>
-          <p class="bys-result-sub">You matched all 4 steps correctly! Here's your exclusive discount — mention this code when you message us.</p>
+        <div class="bys-header bys-header--success">
+          <p class="bys-eyebrow">Congratulations!</p>
+          <h2 class="bys-title" style="font-size:1.5rem">Perfect Order!</h2>
+        </div>
+        <div class="bys-body">
+          <div class="bys-result">
+            <span class="bys-result-icon">&#127881;</span>
+            <p class="bys-result-title">You matched all 4 steps!</p>
+            <p class="bys-result-sub">Here&rsquo;s your exclusive discount. Mention this code when you contact us to claim your 10% off.</p>
+          </div>
           <div class="bys-code-box">
             <p class="bys-code-label">Your Discount Code</p>
-            <p class="bys-code-value">KEEPSIES10</p>
-            <p class="bys-code-note">10% off your order &bull; mention this when you contact us</p>
+            <div class="bys-code-row">
+              <p class="bys-code-value">KEEPSIES10</p>
+              <button class="bys-copy-btn" id="bysCopyBtn">Copy</button>
+            </div>
+            <p class="bys-code-note">10% off &bull; mention this when you contact us</p>
           </div>
           <button class="bys-btn-primary" id="bysExitSuccess">Shop Now</button>
         </div>
       </div>
-
     </div>
   </div>
 
   <script>
-    (function () {
-      var STEPS = [
-        {
-          question: "What occasion is this order for?",
-          options: ["Wedding", "Birthday", "Baptism", "Anniversary"],
-          correct: "Wedding"
-        },
-        {
-          question: "What style does the couple want?",
-          options: ["Playful", "Elegant", "Rustic", "Minimalist"],
-          correct: "Elegant"
-        },
-        {
-          question: "What color theme did they choose?",
-          options: ["Blue & Silver", "Red & Gold", "Blush Pink & White", "Purple & Ivory"],
-          correct: "Blush Pink & White"
-        },
-        {
-          question: "How should each souvenir be finished?",
-          options: ["Wax Seal", "Engraved Tag", "Dried Flower", "Personalized Ribbon"],
-          correct: "Personalized Ribbon"
-        }
-      ];
-
-      var currentStep = 0;
-      var correctCount = 0;
-
-      var overlay  = document.getElementById('bysOverlay');
-      var intro    = document.getElementById('bysIntro');
-      var stepEl   = document.getElementById('bysStep');
-      var failEl   = document.getElementById('bysFail');
-      var successEl= document.getElementById('bysSuccess');
-
-      function showScreen(el) {
-        [intro, stepEl, failEl, successEl].forEach(function(s){ s.classList.remove('active'); });
-        el.classList.add('active');
+  (function(){
+    'use strict';
+    var COOLDOWN_MS=10*24*60*60*1000;
+    var SCENARIOS=[
+      {label:"Tonight's Order",text:'A couple is planning their <strong>Wedding</strong> in Davao. They want guests to take home something <strong>Elegant</strong>. They\'ve chosen a <strong>Blush Pink &amp; White</strong> color theme, finished with a <strong>Personalized Ribbon</strong>.',keys:['Wedding','Elegant','Blush Pink & White','Personalized Ribbon'],steps:[{q:'What occasion is this order for?',opts:['Wedding','Birthday','Baptism','Anniversary'],a:'Wedding'},{q:'What style does the couple want?',opts:['Playful','Elegant','Rustic','Minimalist'],a:'Elegant'},{q:'What color theme did they choose?',opts:['Blue & Silver','Red & Gold','Blush Pink & White','Purple & Ivory'],a:'Blush Pink & White'},{q:'How should each souvenir be finished?',opts:['Wax Seal','Engraved Tag','Dried Flower','Personalized Ribbon'],a:'Personalized Ribbon'}]},
+      {label:'New Order',text:'Parents are celebrating their baby\'s <strong>Baptism</strong>. They want keepsakes that feel <strong>Soft &amp; Delicate</strong>. The color theme is <strong>Mint Green &amp; Cream</strong>, finished with a <strong>Lace Wrap</strong>.',keys:['Baptism','Soft & Delicate','Mint Green & Cream','Lace Wrap'],steps:[{q:'What event is this order for?',opts:['Wedding','Baptism','Birthday','Anniversary'],a:'Baptism'},{q:'What feel did the parents request?',opts:['Bold & Modern','Soft & Delicate','Rustic','Minimalist'],a:'Soft & Delicate'},{q:'What color theme was chosen?',opts:['Blush Pink & Gold','Lavender & Silver','Mint Green & Cream','White & Ivory'],a:'Mint Green & Cream'},{q:'What finishing touch was requested?',opts:['Engraved Tag','Lace Wrap','Satin Bow','Dried Flower'],a:'Lace Wrap'}]},
+      {label:'Special Order',text:'A family is hosting a <strong>Birthday</strong> party. They want souvenirs that feel <strong>Fun &amp; Festive</strong>, with a <strong>Gold &amp; Burgundy</strong> color theme, each carrying a <strong>Custom Name Tag</strong>.',keys:['Birthday','Fun & Festive','Gold & Burgundy','Custom Name Tag'],steps:[{q:'What occasion is this order for?',opts:['Wedding','Baptism','Birthday','Anniversary'],a:'Birthday'},{q:'What vibe did they request?',opts:['Elegant','Romantic','Fun & Festive','Minimalist'],a:'Fun & Festive'},{q:'What are the chosen colors?',opts:['Blush Pink & White','Gold & Burgundy','Mint & Cream','Blue & Silver'],a:'Gold & Burgundy'},{q:'What personalizes each souvenir?',opts:['Wax Seal','Personalized Ribbon','Custom Name Tag','Lace Wrap'],a:'Custom Name Tag'}]},
+      {label:'Romantic Order',text:'A couple is marking their <strong>Anniversary</strong>. They want keepsakes that feel <strong>Romantic &amp; Timeless</strong>, in a <strong>Rose Gold &amp; Pearl</strong> palette, each wrapped in a <strong>Velvet Pouch</strong>.',keys:['Anniversary','Romantic & Timeless','Rose Gold & Pearl','Velvet Pouch'],steps:[{q:'What milestone is being celebrated?',opts:['Wedding','Baptism','Birthday','Anniversary'],a:'Anniversary'},{q:'What mood were they going for?',opts:['Fun & Festive','Romantic & Timeless','Soft & Delicate','Modern'],a:'Romantic & Timeless'},{q:'What colors did they choose?',opts:['Rose Gold & Pearl','Blush Pink & White','Gold & Burgundy','Mint & Cream'],a:'Rose Gold & Pearl'},{q:'How will each souvenir be packaged?',opts:['Lace Wrap','Custom Name Tag','Personalized Ribbon','Velvet Pouch'],a:'Velvet Pouch'}]}
+    ];
+    var overlay=document.getElementById('bysOverlay');
+    var introEl=document.getElementById('bysIntro');
+    var cooldownEl=document.getElementById('bysCooldown');
+    var stepEl=document.getElementById('bysStep');
+    var failEl=document.getElementById('bysFail');
+    var successEl=document.getElementById('bysSuccess');
+    var allScreens=[introEl,cooldownEl,stepEl,failEl,successEl];
+    var currentStep=0,currentScenario=null,gameRecorded=false;
+    function showScreen(el){allScreens.forEach(function(s){s.classList.remove('active')});el.classList.add('active')}
+    function openGame(){overlay.classList.remove('hidden')}
+    function closeGame(){overlay.classList.add('hidden')}
+    function updateDots(step){
+      var dots=document.querySelectorAll('#bysDots .bys-dot');
+      var lines=document.querySelectorAll('#bysDots .bys-dot-line');
+      dots.forEach(function(d,i){d.classList.remove('active','done');var sp=d.querySelector('span');if(i<step){d.classList.add('done');sp.textContent='✓'}else if(i===step){d.classList.add('active');sp.textContent=String(i+1)}else{sp.textContent=String(i+1)}});
+      lines.forEach(function(l,i){l.classList.toggle('done',i<step)});
+    }
+    function renderStep(){
+      var data=currentScenario.steps[currentStep];
+      updateDots(currentStep);
+      document.getElementById('bysReminder').innerHTML='Order reminder: '+currentScenario.keys.map(function(k){return '<strong>'+k+'</strong>'}).join(' &middot; ');
+      document.getElementById('bysQuestion').textContent=data.q;
+      var opts=document.getElementById('bysOptions');opts.innerHTML='';
+      data.opts.forEach(function(opt){var btn=document.createElement('button');btn.className='bys-option';btn.textContent=opt;btn.addEventListener('click',function(){handleAnswer(opt,btn)});opts.appendChild(btn)});
+    }
+    function handleAnswer(chosen,btn){
+      var data=currentScenario.steps[currentStep];
+      var allBtns=document.querySelectorAll('.bys-option');
+      allBtns.forEach(function(b){b.disabled=true});
+      if(chosen===data.a){
+        btn.classList.add('correct');
+        setTimeout(function(){currentStep++;if(currentStep>=currentScenario.steps.length){recordPlay();showScreen(successEl);launchConfetti()}else{renderStep()}},580);
+      }else{
+        btn.classList.add('wrong');
+        allBtns.forEach(function(b){if(b.textContent===data.a)b.classList.add('correct')});
+        setTimeout(function(){recordPlay();showScreen(failEl)},850);
       }
-
-      function openGame() {
-        overlay.classList.remove('hidden');
-        showScreen(intro);
-      }
-
-      function closeGame() {
-        overlay.classList.add('hidden');
-        sessionStorage.setItem('bys_played', '1');
-      }
-
-      function startGame() {
-        currentStep  = 0;
-        correctCount = 0;
-        renderStep();
-        showScreen(stepEl);
-      }
-
-      function renderStep() {
-        var data = STEPS[currentStep];
-        document.getElementById('bysStepLabel').textContent = 'Step ' + (currentStep + 1) + ' of ' + STEPS.length;
-        document.getElementById('bysStepScore').textContent = correctCount + ' correct';
-        document.getElementById('bysProgressFill').style.width = (currentStep / STEPS.length * 100) + '%';
-        document.getElementById('bysQuestion').textContent = data.question;
-
-        var optionsEl = document.getElementById('bysOptions');
-        optionsEl.innerHTML = '';
-        data.options.forEach(function(opt) {
-          var btn = document.createElement('button');
-          btn.className = 'bys-option';
-          btn.textContent = opt;
-          btn.addEventListener('click', function() { handleAnswer(opt, btn); });
-          optionsEl.appendChild(btn);
-        });
-      }
-
-      function handleAnswer(chosen, btn) {
-        var data = STEPS[currentStep];
-        var allBtns = document.querySelectorAll('.bys-option');
-        allBtns.forEach(function(b){ b.disabled = true; });
-
-        if (chosen === data.correct) {
-          btn.classList.add('correct');
-          correctCount++;
-          setTimeout(function() {
-            currentStep++;
-            if (currentStep >= STEPS.length) {
-              sessionStorage.setItem('bys_played', '1');
-              document.getElementById('bysProgressFill').style.width = '100%';
-              setTimeout(function(){ showScreen(successEl); }, 300);
-            } else {
-              renderStep();
-            }
-          }, 500);
-        } else {
-          btn.classList.add('wrong');
-          allBtns.forEach(function(b){
-            if (b.textContent === data.correct) b.classList.add('correct');
-          });
-          setTimeout(function(){ showScreen(failEl); }, 700);
-        }
-      }
-
-      document.getElementById('bysClose').addEventListener('click', closeGame);
-      document.getElementById('bysSkip').addEventListener('click', closeGame);
-      document.getElementById('bysStart').addEventListener('click', startGame);
-      document.getElementById('bysRetry').addEventListener('click', startGame);
-      document.getElementById('bysExitFail').addEventListener('click', closeGame);
-      document.getElementById('bysExitSuccess').addEventListener('click', closeGame);
-
-      if (!sessionStorage.getItem('bys_played')) {
-        setTimeout(openGame, 800);
-      }
-    })();
+    }
+    function startGame(){currentStep=0;renderStep();showScreen(stepEl)}
+    function recordPlay(){if(gameRecorded)return;gameRecorded=true;try{localStorage.setItem('bys_cd',String(Date.now()+COOLDOWN_MS))}catch(e){}try{fetch('/api/game',{method:'POST'})}catch(e){}}
+    function launchConfetti(){
+      var canvas=document.getElementById('bysConfetti');if(!canvas)return;
+      var ctx=canvas.getContext('2d');canvas.width=window.innerWidth;canvas.height=window.innerHeight;canvas.style.display='block';
+      var cols=['#C4526B','#D4A853','#FDE8F0','#8B2252','#F2A8BB','#fff8dc','#D4708A','#FFD700'];
+      var parts=[];for(var i=0;i<115;i++){parts.push({x:canvas.width*.5+(Math.random()-.5)*280,y:canvas.height*.36,vx:(Math.random()-.5)*14,vy:-(Math.random()*10+5),color:cols[Math.floor(Math.random()*cols.length)],w:Math.random()*10+4,h:Math.random()*6+3,rot:Math.random()*360,rspd:(Math.random()-.5)*9,alpha:1})}
+      (function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);var alive=false;parts.forEach(function(p){p.vy+=.38;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.rot+=p.rspd;p.alpha-=.013;if(p.alpha>0){alive=true;ctx.save();ctx.globalAlpha=p.alpha;ctx.fillStyle=p.color;ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore()}});if(alive)requestAnimationFrame(draw);else{canvas.style.display='none';ctx.clearRect(0,0,canvas.width,canvas.height)}})();
+    }
+    document.getElementById('bysCopyBtn').addEventListener('click',function(){var self=this;navigator.clipboard.writeText('KEEPSIES10').then(function(){self.textContent='Copied!';setTimeout(function(){self.textContent='Copy'},1600)}).catch(function(){})});
+    document.getElementById('bysClose').addEventListener('click',closeGame);
+    document.getElementById('bysSkip').addEventListener('click',closeGame);
+    document.getElementById('bysStart').addEventListener('click',function(){gameRecorded=false;startGame()});
+    document.getElementById('bysRetry').addEventListener('click',startGame);
+    document.getElementById('bysExitFail').addEventListener('click',function(){closeGame();window.location.href='products.html'});
+    document.getElementById('bysExitSuccess').addEventListener('click',function(){closeGame();window.location.href='products.html'});
+    document.getElementById('bysCooldownExit').addEventListener('click',closeGame);
+    async function init(){
+      try{var stored=localStorage.getItem('bys_cd');if(stored&&Date.now()<parseInt(stored,10))return}catch(e){}
+      var period=Math.floor(Date.now()/COOLDOWN_MS),canPlay=true,daysLeft=0;
+      try{var resp=await fetch('/api/game');if(resp.ok){var data=await resp.json();canPlay=data.canPlay!==false;daysLeft=data.daysLeft||0;if(data.period!==undefined)period=data.period}}catch(e){}
+      currentScenario=SCENARIOS[period%SCENARIOS.length];
+      document.getElementById('bysOrderLabel').textContent=currentScenario.label;
+      document.getElementById('bysOrderText').innerHTML=currentScenario.text;
+      if(!canPlay){var msg=daysLeft===1?'Come back <strong>tomorrow</strong> for a brand new game!':'Come back in <strong>'+daysLeft+' days</strong> for a new game and another discount chance.';document.getElementById('bysCooldownMsg').innerHTML=msg;showScreen(cooldownEl);setTimeout(openGame,800);return}
+      showScreen(introEl);setTimeout(openGame,800);
+    }
+    init();
+  })();
   </script>
 </body>
 </html>
