@@ -1877,15 +1877,19 @@
           <div class="bys-result">
             <span class="bys-result-icon">&#127881;</span>
             <p class="bys-result-title">You matched all 4 steps!</p>
-            <p class="bys-result-sub">Here&rsquo;s your exclusive discount. Mention this code when you contact us to claim your 10% off.</p>
+            <p class="bys-result-sub" id="bysSuccessSub">Here&rsquo;s your exclusive discount. Mention this code when you contact us to claim your 10% off.</p>
           </div>
-          <div class="bys-code-box">
+          <div class="bys-code-box" id="bysCodeBox">
             <p class="bys-code-label">Your Discount Code</p>
             <div class="bys-code-row">
               <p class="bys-code-value">KEEPSIES10</p>
               <button class="bys-copy-btn" id="bysCopyBtn">Copy</button>
             </div>
             <p class="bys-code-note">10% off &bull; mention this when you contact us</p>
+          </div>
+          <div id="bysLoginPrompt" style="display:none;text-align:center;padding:4px 0 8px">
+            <p style="font-size:.87rem;color:#6B5A60;line-height:1.5;margin-bottom:14px">You need a free account to reveal and use your discount. It only takes a moment!</p>
+            <a href="login.html" style="display:flex;align-items:center;justify-content:center;width:100%;padding:13px 24px;background:linear-gradient(135deg,#D6336C,#ED4F86);color:#fff;font-family:inherit;font-weight:700;font-size:.92rem;border-radius:999px;text-decoration:none;margin-bottom:8px">Log In / Sign Up to Reveal Code</a>
           </div>
           <button class="bys-btn-primary" id="bysExitSuccess">Shop Now</button>
         </div>
@@ -1899,6 +1903,7 @@
     'use strict';
     var COOLDOWN_MS=10*24*60*60*1000;
     var isAdmin=false;
+    var isLoggedIn=false;
     var SCENARIOS=[
       {label:"Tonight's Order",text:'A couple is planning their <strong>Wedding</strong> in Davao. They want guests to take home something <strong>Elegant</strong>. They\'ve chosen a <strong>Blush Pink &amp; White</strong> color theme, finished with a <strong>Personalized Ribbon</strong>.',keys:['Wedding','Elegant','Blush Pink & White','Personalized Ribbon'],steps:[{q:'What occasion is this order for?',opts:['Wedding','Birthday','Baptism','Anniversary'],a:'Wedding'},{q:'What style does the couple want?',opts:['Playful','Elegant','Rustic','Minimalist'],a:'Elegant'},{q:'What color theme did they choose?',opts:['Blue & Silver','Red & Gold','Blush Pink & White','Purple & Ivory'],a:'Blush Pink & White'},{q:'How should each souvenir be finished?',opts:['Wax Seal','Engraved Tag','Dried Flower','Personalized Ribbon'],a:'Personalized Ribbon'}]},
       {label:'New Order',text:'Parents are celebrating their baby\'s <strong>Baptism</strong>. They want keepsakes that feel <strong>Soft &amp; Delicate</strong>. The color theme is <strong>Mint Green &amp; Cream</strong>, finished with a <strong>Lace Wrap</strong>.',keys:['Baptism','Soft & Delicate','Mint Green & Cream','Lace Wrap'],steps:[{q:'What event is this order for?',opts:['Wedding','Baptism','Birthday','Anniversary'],a:'Baptism'},{q:'What feel did the parents request?',opts:['Bold & Modern','Soft & Delicate','Rustic','Minimalist'],a:'Soft & Delicate'},{q:'What color theme was chosen?',opts:['Blush Pink & Gold','Lavender & Silver','Mint Green & Cream','White & Ivory'],a:'Mint Green & Cream'},{q:'What finishing touch was requested?',opts:['Engraved Tag','Lace Wrap','Satin Bow','Dried Flower'],a:'Lace Wrap'}]},
@@ -1936,7 +1941,7 @@
       allBtns.forEach(function(b){b.disabled=true});
       if(chosen===data.a){
         btn.classList.add('correct');
-        setTimeout(function(){currentStep++;if(currentStep>=currentScenario.steps.length){recordPlay();showScreen(successEl);launchConfetti()}else{renderStep()}},580);
+        setTimeout(function(){currentStep++;if(currentStep>=currentScenario.steps.length){showSuccess()}else{renderStep()}},580);
       }else{
         btn.classList.add('wrong');
         allBtns.forEach(function(b){if(b.textContent===data.a)b.classList.add('correct')});
@@ -1944,7 +1949,24 @@
       }
     }
     function startGame(){currentStep=0;renderStep();showScreen(stepEl)}
-    function recordPlay(){if(gameRecorded)return;if(isAdmin)return;gameRecorded=true;try{localStorage.setItem('bys_cd',String(Date.now()+COOLDOWN_MS))}catch(e){}try{fetch('/api/game',{method:'POST'})}catch(e){}}
+    function recordPlay(){if(gameRecorded)return;if(isAdmin)return;gameRecorded=true;try{fetch('/api/game',{method:'POST'})}catch(e){}}
+    function showSuccess(){
+      recordPlay();
+      var codeBox=document.getElementById('bysCodeBox');
+      var loginPrompt=document.getElementById('bysLoginPrompt');
+      var sub=document.getElementById('bysSuccessSub');
+      if(isLoggedIn){
+        if(codeBox)codeBox.style.display='';
+        if(loginPrompt)loginPrompt.style.display='none';
+        if(sub)sub.textContent='Here’s your exclusive discount. Mention this code when you contact us to claim your 10% off.';
+      }else{
+        if(codeBox)codeBox.style.display='none';
+        if(loginPrompt)loginPrompt.style.display='';
+        if(sub)sub.textContent='You earned 10% off! Log in or create a free account to reveal your discount code.';
+      }
+      showScreen(successEl);
+      launchConfetti();
+    }
     function launchConfetti(){
       var canvas=document.getElementById('bysConfetti');if(!canvas)return;
       var ctx=canvas.getContext('2d');canvas.width=window.innerWidth;canvas.height=window.innerHeight;canvas.style.display='block';
@@ -1964,16 +1986,13 @@
         if(typeof supabase!=='undefined'){
           var _sb=supabase.createClient('https://boxudirhejtzklnpnxfw.supabase.co','sb_publishable_j9kJoHJXwKXQcXY-ginFKQ_p5eilcPr');
           var _u=(await _sb.auth.getUser()).data.user;
-          if(_u&&_u.email==='jesusnuez22222@gmail.com')isAdmin=true;
+          if(_u){isLoggedIn=true;if(_u.email==='jesusnuez22222@gmail.com')isAdmin=true;}
         }
       }catch(e){}
-      if(!isAdmin){try{var stored=localStorage.getItem('bys_cd');if(stored&&Date.now()<parseInt(stored,10))return}catch(e){}}
-      var period=Math.floor(Date.now()/COOLDOWN_MS),canPlay=true,daysLeft=0;
-      if(!isAdmin){try{var resp=await fetch('/api/game');if(resp.ok){var data=await resp.json();canPlay=data.canPlay!==false;daysLeft=data.daysLeft||0;if(data.period!==undefined)period=data.period}}catch(e){}}
+      var period=Math.floor(Date.now()/COOLDOWN_MS);
       currentScenario=SCENARIOS[period%SCENARIOS.length];
       document.getElementById('bysOrderLabel').textContent=currentScenario.label;
       document.getElementById('bysOrderText').innerHTML=currentScenario.text;
-      if(!canPlay){var msg=daysLeft===1?'Come back <strong>tomorrow</strong> for a brand new game!':'Come back in <strong>'+daysLeft+' days</strong> for a new game and another discount chance.';document.getElementById('bysCooldownMsg').innerHTML=msg;showScreen(cooldownEl);setTimeout(openGame,800);return}
       showScreen(introEl);setTimeout(openGame,800);
     }
     init();
